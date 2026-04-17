@@ -641,12 +641,11 @@
       <img src="apider_logo.png" alt="Apider" />
     </a>
     <ul class="nav-links">
-      <li><a href="#problem">Problem</a></li>
       <li><a href="#features">Features</a></li>
-      <li><a href="#progress">Progress</a></li>
-      <li><a href="#vision">Vision</a></li>
+      <li><a href="#modules">Modules</a></li>
+      <li><a href="#pricing">Pricing</a></li>
       <li><a href="https://github.com/apider-io" target="_blank">GitHub</a></li>
-      <li><a href="#cta" class="nav-cta">Join beta</a></li>
+      <li><a href="#pricing" class="nav-cta">Get started</a></li>
     </ul>
   </nav>
 
@@ -657,15 +656,15 @@
 
     <div class="hero-badge">
       <span></span>
-      Private Beta · Limited access
+      Now in beta · v0.1.0
     </div>
 
-    <h1>The fastest way to automate<br /><em>the internet</em> with Python.</h1>
+    <h1>Automate APIs.<br /><em>Without</em> the mess.</h1>
 
-    <p>Replace Zapier, cron jobs, and 500 lines of glue code with one SDK. Run automations locally or in the cloud — instantly.</p>
+    <p>Apider is a Python SDK that connects Email, Telegram, Slack, Discord, Sheets and more — in one line of code. Run it in the cloud with zero infrastructure.</p>
 
     <div class="hero-actions">
-      <a href="#cta" class="btn-primary">Join the beta</a>
+      <a href="#pricing" class="btn-primary">Start for free</a>
       <a href="https://github.com/apider-io" target="_blank" class="btn-secondary">View on GitHub →</a>
     </div>
 
@@ -674,149 +673,247 @@
         <div class="dot dot-r"></div>
         <div class="dot dot-y"></div>
         <div class="dot dot-g"></div>
-        <span class="code-filename">automation.py</span>
+        <span class="code-filename">my_automation.py</span>
       </div>
       <div class="code-body">
 <span class="c-keyword">from</span> <span class="c-cls">apider</span> <span class="c-keyword">import</span> Email, Telegram, Sheets, CloudScheduler<br />
 <br />
-<span class="c-keyword">def</span> <span class="c-fn">pipeline</span>():<br />
+<span class="c-keyword">def</span> <span class="c-fn">daily_report</span>():<br />
 &nbsp;&nbsp;&nbsp;&nbsp;emails = Email.<span class="c-fn">read</span>(unread_only=<span class="c-keyword">True</span>)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;Sheets.<span class="c-fn">append</span>([e.subject <span class="c-keyword">for</span> e <span class="c-keyword">in</span> emails])<br />
-&nbsp;&nbsp;&nbsp;&nbsp;Telegram.<span class="c-fn">send</span>(<span class="c-str">f"Processed </span><span class="c-red">{len(emails)}</span><span class="c-str"> emails"</span>)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Telegram.<span class="c-fn">send</span>(<span class="c-str">f"📬 </span><span class="c-red">{len(emails)}</span><span class="c-str"> new emails processed"</span>)<br />
 <br />
-CloudScheduler.<span class="c-fn">daily_at</span>(<span class="c-str">"08:00"</span>, pipeline)
+<span class="c-comment"># Runs on Azure — no server needed</span><br />
+CloudScheduler.<span class="c-fn">daily_at</span>(<span class="c-str">"08:00"</span>, daily_report)
       </div>
     </div>
   </div>
 
-  <!-- PROBLEM -->
-  <section id="problem">
-    <div class="section-label">// problem</div>
-    <h2 class="section-title">Stop stitching APIs manually.</h2>
-    <p class="section-sub">
-      OAuth flows. Webhooks. Cron jobs. Cloud infrastructure.<br><br>
-      Every automation = hours of setup and fragile code.
-    </p>
-  </section>
-
-  <!-- SOLUTION -->
-  <section>
-    <div class="section-label">// solution</div>
-    <h2 class="section-title">Apider removes all of it.</h2>
-    <p class="section-sub">
-      One SDK. One interface. Every service connected.
-    </p>
-  </section>
-
-  <!-- FEATURES -->
+  <!-- Features -->
   <section id="features">
     <div class="section-label">// why apider</div>
-    <h2 class="section-title">Stop writing infrastructure.</h2>
+    <h2 class="section-title">Stop writing<br />infrastructure.</h2>
+    <p class="section-sub">100 lines of SMTP setup, OAuth flows, webhook handlers — Apider collapses all of it into clean, readable Python.</p>
 
     <div class="features-grid">
       <div class="feature">
-        <h3>⚡ Zero boilerplate</h3>
-        <p>No OAuth setup. No configs. Just Python.</p>
+        <div class="feature-icon">⚡</div>
+        <h3>Zero boilerplate</h3>
+        <p>One import. One line. Done. No config files, no OAuth setup, no connection management.</p>
       </div>
       <div class="feature">
-        <h3>☁️ Cloud-native</h3>
-        <p>Runs on Azure Functions instantly.</p>
+        <div class="feature-icon">☁️</div>
+        <h3>Cloud-native execution</h3>
+        <p>Run your scripts on Azure Functions with a single command. No servers to manage, ever.</p>
       </div>
       <div class="feature">
-        <h3>⏰ Scheduler</h3>
-        <p>Cron jobs in one line.</p>
+        <div class="feature-icon">⏰</div>
+        <h3>Built-in scheduler</h3>
+        <p>Schedule any function to run on a cron — locally or in the cloud — in one line of code.</p>
       </div>
       <div class="feature">
-        <h3>🔒 Secure</h3>
-        <p>Your keys stay local. Always.</p>
+        <div class="feature-icon">🔒</div>
+        <h3>Your credentials, your control</h3>
+        <p>API keys stay in your .env. We never touch your secrets — Apider just executes your code.</p>
       </div>
       <div class="feature">
-        <h3>🐍 Python-first</h3>
-        <p>No YAML. No UI builders.</p>
+        <div class="feature-icon">🐍</div>
+        <h3>Pure Python</h3>
+        <p>No YAML, no drag-and-drop, no visual editors. Just Python — the language you already know.</p>
       </div>
       <div class="feature">
-        <h3>🔌 Integrations</h3>
-        <p>Email, Telegram, Slack, Discord, Sheets.</p>
+        <div class="feature-icon">🔌</div>
+        <h3>Growing integrations</h3>
+        <p>Email, Telegram, Discord, Slack, Google Sheets — and more modules shipping every month.</p>
       </div>
     </div>
   </section>
 
-  <!-- PROOF -->
-  <section>
-    <div class="section-label">// reality</div>
-    <h2 class="section-title">Built for real workflows.</h2>
-    <p class="section-sub">
-      Used to run reporting pipelines, notifications, and automation systems.<br><br>
-      Running in production on Azure Functions.
-    </p>
-  </section>
+  <!-- Modules -->
+  <div class="modules-section" id="modules">
+    <div>
+      <div>
+        <div class="section-label">// integrations</div>
+        <h2 class="section-title">Every service.<br />One API.</h2>
+        <p class="section-sub">Each module exposes a dead-simple interface. No documentation diving required.</p>
+      </div>
 
-  <!-- PROGRESS -->
-  <section id="progress">
-    <div class="section-label">// progress</div>
-    <h2 class="section-title">Built. Running. Scaling.</h2>
-
-    <div class="features-grid">
-      <div class="feature">
-        <h3>Version</h3>
-        <p>v0.1.0 — core SDK operational</p>
-      </div>
-      <div class="feature">
-        <h3>Integrations</h3>
-        <p>5 live modules</p>
-      </div>
-      <div class="feature">
-        <h3>Execution</h3>
-        <p>Azure Functions</p>
-      </div>
-      <div class="feature">
-        <h3>Status</h3>
-        <p>Private beta</p>
-      </div>
-      <div class="feature">
-        <h3>Next</h3>
-        <p>Public release + CLI</p>
-      </div>
-      <div class="feature">
-        <h3>Focus</h3>
-        <p>Kill backend glue code</p>
+      <div class="modules-list">
+        <div class="module-item">
+          <span class="module-emoji">📧</span>
+          <div class="module-info">
+            <h4>Email</h4>
+            <p>Email.send() · Email.read()</p>
+          </div>
+          <span class="module-badge">live</span>
+        </div>
+        <div class="module-item">
+          <span class="module-emoji">📨</span>
+          <div class="module-info">
+            <h4>Telegram</h4>
+            <p>Telegram.send()</p>
+          </div>
+          <span class="module-badge">live</span>
+        </div>
+        <div class="module-item">
+          <span class="module-emoji">💬</span>
+          <div class="module-info">
+            <h4>Discord</h4>
+            <p>Discord.send()</p>
+          </div>
+          <span class="module-badge">live</span>
+        </div>
+        <div class="module-item">
+          <span class="module-emoji">💼</span>
+          <div class="module-info">
+            <h4>Slack</h4>
+            <p>Slack.send()</p>
+          </div>
+          <span class="module-badge">live</span>
+        </div>
+        <div class="module-item">
+          <span class="module-emoji">📊</span>
+          <div class="module-info">
+            <h4>Google Sheets</h4>
+            <p>Sheets.read() · Sheets.append()</p>
+          </div>
+          <span class="module-badge">live</span>
+        </div>
       </div>
     </div>
-  </section>
 
-  <!-- VISION -->
-  <section id="vision">
-    <div class="section-label">// vision</div>
-    <h2 class="section-title">We are building the API layer of the internet.</h2>
+    <div class="hero-code" style="margin-top:0; animation:none;">
+      <div class="code-header">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="code-filename">integrations.py</span>
+      </div>
+      <div class="code-body">
+<span class="c-comment"># Email — Gmail, Outlook, Zoho, Proton</span><br />
+Email.<span class="c-fn">send</span>(<span class="c-str">"boss@corp.com"</span>, <span class="c-str">"Report"</span>, body)<br />
+emails = Email.<span class="c-fn">read</span>(unread_only=<span class="c-keyword">True</span>)<br />
+<br />
+<span class="c-comment"># Notifications — one line each</span><br />
+Telegram.<span class="c-fn">send</span>(<span class="c-str">"🚨 Alert fired"</span>)<br />
+Discord.<span class="c-fn">send</span>(<span class="c-str">"Deploy complete ✅"</span>)<br />
+Slack.<span class="c-fn">send</span>(<span class="c-str">"Daily report ready"</span>)<br />
+<br />
+<span class="c-comment"># Google Sheets — read and write</span><br />
+df = Sheets.<span class="c-fn">read</span>(filters={<span class="c-str">"status"</span>: <span class="c-str">"pending"</span>})<br />
+Sheets.<span class="c-fn">append</span>([<span class="c-str">"John"</span>, <span class="c-num">42</span>, <span class="c-str">"Lima"</span>])<br />
+Sheets.<span class="c-fn">upsert</span>(<span class="c-str">"id"</span>, <span class="c-str">"001"</span>, [<span class="c-str">"John"</span>, <span class="c-num">43</span>])
+      </div>
+    </div>
+  </div>
 
-    <p class="section-sub">
-      Developers shouldn't wire APIs manually.<br><br>
-      Automation should be instant.<br><br>
-      Apider is not a tool.<br>
-      It’s infrastructure.
-    </p>
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="section-label">// pricing</div>
+    <h2 class="section-title">Simple, honest pricing.</h2>
+    <p class="section-sub">Pay for what you use. No hidden fees, no per-step billing, no surprises.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-period">forever</div>
+        <ul class="plan-features">
+          <li>1 scheduled job</li>
+          <li>2,000 executions/month</li>
+          <li>All modules included</li>
+          <li>Cloud execution</li>
+        </ul>
+        <a href="https://github.com/apider-io" class="plan-btn">Get started free</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>$</sup>19</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li>10 scheduled jobs</li>
+          <li>50,000 executions/month</li>
+          <li>All modules included</li>
+          <li>Priority execution</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#" class="plan-btn">Start Pro</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="plan-name">Business</div>
+        <div class="plan-price"><sup>$</sup>49</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li>Unlimited jobs</li>
+          <li>500,000 executions/month</li>
+          <li>All modules included</li>
+          <li>Priority execution</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="plan-btn">Start Business</a>
+      </div>
+    </div>
   </section>
 
   <!-- CTA -->
-  <div class="cta-section" id="cta">
-    <h2>Start automating in minutes.</h2>
-    <p>Join the beta. Build your first automation today.</p>
-
+  <div class="cta-section">
+    <h2>Start automating<br />in 5 minutes.</h2>
+    <p>Install the SDK, write your first automation, run it in the cloud.</p>
     <div class="install-box">
       <span>$</span> pip install apider
     </div>
-
     <br />
-    <a href="https://github.com/apider-io" class="btn-primary">Join beta →</a>
+    <a href="https://github.com/apider-io" class="btn-primary">Read the docs →</a>
   </div>
 
   <!-- Footer -->
   <footer>
     <p>© 2026 Apider. Built for developers.</p>
     <p>
-      <a href="https://github.com/apider-io" target="_blank">GitHub</a>
+      <a href="https://github.com/apider-io" target="_blank">GitHub</a> ·
+      <a href="mailto:hello@apider.dev">Contact</a>
     </p>
   </footer>
 
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx - 5 + 'px';
+      cursor.style.top = my - 5 + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx - 18) * 0.12;
+      ry += (my - ry - 18) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Intersection observer for scroll animations
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature, .module-item, .pricing-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
