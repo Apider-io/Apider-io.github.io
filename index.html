@@ -2,605 +2,907 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Apider — Python automation without infrastructure. One SDK for Email, Telegram, Discord, Slack, Sheets. Serverless, cloud-native, zero boilerplate.">
   <title>Apider — Python automation without infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --primary: #e8412a;
-      --primary-dark: #c22c1a;
-      --bg: #0a0a0c;
-      --bg-card: #111116;
-      --border: #22222a;
-      --text: #ffffff;
-      --text-secondary: #b0b0c0;
-      --text-muted: #6e6e7a;
-      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --red: #e8412a;
+      --red-dim: rgba(232,65,42,0.12);
+      --red-glow: rgba(232,65,42,0.25);
+      --bg: #080809;
+      --bg2: #0e0e10;
+      --bg3: #131317;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #f0f0f2;
+      --text2: #9090a0;
+      --text3: #55556a;
+      --mono: 'DM Mono', monospace;
+      --sans: 'Space Grotesk', sans-serif;
+      --display: 'Syne', sans-serif;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: var(--font-sans);
-      line-height: 1.5;
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    /* navigation */
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── GLOW BG ── */
+    .bg-glow {
+      position: fixed;
+      top: -30vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(ellipse, rgba(232,65,42,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
     nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(16px);
-      background: rgba(10, 10, 12, 0.8);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      background: rgba(8,8,9,0.75);
       border-bottom: 1px solid var(--border);
     }
-    .nav-container {
+    .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 2rem;
-      max-width: 1400px;
+      max-width: 1300px;
       margin: 0 auto;
+      padding: 0.9rem 2rem;
     }
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 800;
-      font-size: 1.3rem;
+      gap: 0.7rem;
       text-decoration: none;
       color: var(--text);
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
-    /* si usas imagen: reemplazar el contenido de .logo por <img src="ruta" style="height: 32px;"> */
-    .logo span { color: var(--primary); }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
     .nav-links a {
-      color: var(--text-secondary);
+      color: var(--text2);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--primary); }
-    .btn-nav {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: 40px;
-      padding: 0.5rem 1.2rem;
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--red);
+      color: white !important;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      font-size: 0.85rem !important;
+      transition: opacity 0.2s !important;
     }
-    .mobile-menu-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+    .nav-cta:hover { opacity: 0.85; }
+    .mobile-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
 
-    /* container */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 2rem;
+    /* ── CONTAINER ── */
+    .wrap { max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 0 5rem;
+      text-align: center;
+    }
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--bg3);
+      border: 1px solid var(--border-bright);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text2);
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .chip-dot {
+      width: 7px; height: 7px;
+      background: #2ecc71;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #2ecc71;
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(3.5rem, 9vw, 6.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.0;
+      margin-bottom: 1.8rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero h1 .accent { color: var(--red); }
+    .hero h1 .dim { color: var(--text3); }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text2);
+      max-width: 560px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+      animation: fadeUp 0.6s 0.2s ease both;
     }
 
-    /* buttons */
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 5rem;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTONS ── */
     .btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 0.5rem;
-      padding: 0.75rem 2rem;
-      border-radius: 60px;
+      padding: 0.8rem 2rem;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       text-decoration: none;
-      transition: all 0.2s ease;
       cursor: pointer;
       border: none;
+      transition: all 0.2s;
+      font-family: var(--sans);
     }
-    .btn-primary {
-      background: var(--primary);
+    .btn-red {
+      background: var(--red);
       color: white;
-      box-shadow: 0 4px 12px rgba(232, 65, 42, 0.3);
+      box-shadow: 0 0 24px var(--red-glow);
     }
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
+    .btn-red:hover { transform: translateY(-2px); box-shadow: 0 4px 32px var(--red-glow); }
+    .btn-ghost {
+      background: var(--bg3);
+      border: 1px solid var(--border-bright);
+      color: var(--text2);
     }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-outline:hover {
-      border-color: var(--primary);
-      background: rgba(232, 65, 42, 0.1);
-    }
+    .btn-ghost:hover { border-color: var(--red); color: var(--text); }
 
-    /* hero */
-    .hero {
-      padding: 5rem 0 6rem;
-      text-align: center;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 0.3rem 1rem;
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      margin-bottom: 2rem;
-    }
-    .live-dot {
-      width: 8px; height: 8px;
-      background: #2ecc71;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
-    .hero h1 {
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      color: var(--text);
-    }
-    .hero h1 em { color: var(--primary); font-style: normal; }
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-    .hero-actions { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
-
-    /* code editor - estilo real */
-    .code-editor {
-      max-width: 860px;
+    /* ── CODE EDITOR ── */
+    .editor-wrap {
+      max-width: 900px;
       margin: 0 auto;
-      background: #0c0c12;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      text-align: left;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.4);
+      animation: fadeUp 0.6s 0.4s ease both;
     }
-    .editor-header {
+    .editor {
+      background: var(--bg2);
+      border: 1px solid var(--border-bright);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .editor-bar {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.8rem 1.2rem;
-      background: #0f0f14;
+      gap: 0.75rem;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg3);
       border-bottom: 1px solid var(--border);
     }
-    .window-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .red { background: #ff5f57; }
-    .yellow { background: #febc2e; }
-    .green { background: #2ecc71; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
     .editor-tabs {
       display: flex;
       gap: 0.25rem;
-      margin-left: 1rem;
-      background: #15151c;
-      border-radius: 10px;
-      padding: 0.2rem;
+      margin-left: auto;
     }
-    .editor-tab {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      padding: 0.4rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      color: var(--text-muted);
-      background: transparent;
-      transition: all 0.2s;
-    }
-    .editor-tab.active {
-      background: var(--primary);
-      color: white;
-    }
-    .code-pane {
-      display: none;
-      padding: 1.5rem;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      line-height: 1.6;
-      overflow-x: auto;
-      background: #0c0c12;
-    }
-    .code-pane.active { display: block; }
-    .code-pane pre {
-      margin: 0;
-      white-space: pre-wrap;
-      font-family: var(--font-mono);
-    }
-    .keyword { color: #c792ea; }
-    .func { color: #82aaff; }
-    .string { color: #c3e88d; }
-    .number { color: #f78c6c; }
-    .comment { color: #6e6e7a; }
-
-    /* sections */
-    .section { padding: 5rem 0; }
-    .section-header { text-align: center; margin-bottom: 3rem; }
-    .section-badge {
-      display: inline-block;
-      background: rgba(232,65,42,0.12);
-      padding: 0.2rem 0.8rem;
-      border-radius: 40px;
+    .etab {
+      font-family: var(--mono);
       font-size: 0.75rem;
-      font-family: var(--font-mono);
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-    .section-title {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 1rem;
-    }
-    .section-sub {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      max-width: 640px;
-      margin: 0 auto;
-    }
-
-    /* features */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 1.8rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text3);
+      background: transparent;
+      border: 1px solid transparent;
       transition: all 0.2s;
     }
-    .feature-card:hover { border-color: var(--primary); transform: translateY(-4px); }
-    .feature-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
-    .feature-card p { color: var(--text-secondary); font-size: 0.9rem; }
+    .etab:hover { color: var(--text2); }
+    .etab.on { background: var(--red); color: white; border-color: var(--red); }
+    .pane {
+      display: none;
+      padding: 1.75rem 2rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.8;
+      min-height: 180px;
+    }
+    .pane.on { display: block; }
+    .pane pre { margin: 0; white-space: pre-wrap; }
+    .kw { color: #c792ea; }
+    .fn { color: #82aaff; }
+    .st { color: #c3e88d; }
+    .nm { color: #f78c6c; }
+    .cm { color: var(--text3); font-style: italic; }
+    .op { color: var(--text2); }
 
-    /* marquee integraciones */
-    .marquee {
-      overflow: hidden;
-      white-space: nowrap;
-      margin: 2rem 0;
-    }
-    .marquee-content {
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ── SECTION ── */
+    section { position: relative; z-index: 1; padding: 6rem 0; }
+    .s-label {
       display: inline-block;
-      animation: scroll 20s linear infinite;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--red);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
     }
-    .marquee-content span {
-      background: var(--bg-card);
+    .s-title {
+      font-family: var(--display);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .s-sub {
+      font-size: 1.05rem;
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 3.5rem;
+    }
+    .feat-card {
+      background: var(--bg2);
       border: 1px solid var(--border);
-      padding: 0.3rem 1.2rem;
-      border-radius: 40px;
-      margin: 0 0.5rem;
-      font-size: 0.85rem;
-      display: inline-block;
+      border-radius: 18px;
+      padding: 1.75rem;
+      transition: border-color 0.3s, transform 0.3s;
     }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .feat-card:hover { border-color: var(--red); transform: translateY(-4px); }
+    .feat-icon {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      display: block;
     }
+    .feat-card h3 {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .feat-card p { color: var(--text2); font-size: 0.875rem; line-height: 1.65; }
 
-    /* pricing toggle */
+    /* ── MARQUEE ── */
+    .marquee-section { padding: 3rem 0; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
+    .marquee-track { display: flex; gap: 1rem; animation: march 25s linear infinite; width: max-content; }
+    .marquee-track:hover { animation-play-state: paused; }
+    .mtag {
+      background: var(--bg3);
+      border: 1px solid var(--border-bright);
+      border-radius: 100px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.82rem;
+      color: var(--text2);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mtag span { font-size: 1rem; }
+    @keyframes march { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── HOW IT WORKS ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3.5rem;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 2.5rem;
+      left: calc(33.33% + 1rem);
+      right: calc(33.33% + 1rem);
+      height: 1px;
+      background: linear-gradient(90deg, var(--red), transparent);
+      opacity: 0.4;
+    }
+    .step { text-align: center; padding: 2rem 1.5rem; }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--red-dim);
+      border: 1px solid var(--red);
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 1.25rem;
+    }
+    .step h3 { font-family: var(--display); font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.02em; }
+    .step p { color: var(--text2); font-size: 0.875rem; line-height: 1.65; }
+
+    /* ── PRICING ── */
     .pricing-toggle {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-    }
-    .toggle-btn {
-      background: transparent;
+      background: var(--bg3);
       border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.3rem;
+      width: fit-content;
+      margin: 2.5rem auto;
+    }
+    .ptoggle {
       padding: 0.5rem 1.5rem;
-      border-radius: 40px;
-      color: var(--text-secondary);
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 0.85rem;
       cursor: pointer;
-      font-weight: 500;
+      background: transparent;
+      border: none;
+      color: var(--text2);
+      font-family: var(--sans);
       transition: all 0.2s;
     }
-    .toggle-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
+    .ptoggle.on { background: var(--red); color: white; }
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 0;
+      align-items: start;
     }
-    .pricing-card {
-      background: var(--bg-card);
+    .plan {
+      background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 28px;
+      border-radius: 22px;
       padding: 2rem;
-      transition: transform 0.2s;
+      transition: transform 0.3s;
     }
-    .pricing-card.featured {
-      border-color: var(--primary);
-      background: linear-gradient(145deg, #13131a, #0e0e12);
+    .plan:hover { transform: translateY(-4px); }
+    .plan.featured {
+      border-color: var(--red);
+      background: linear-gradient(160deg, rgba(232,65,42,0.06), var(--bg2));
+      position: relative;
     }
-    .price { font-size: 3rem; font-weight: 800; margin: 1rem 0; }
-    .price small { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
-    .plan-features { list-style: none; margin: 1.5rem 0; }
+    .featured-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--red);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.9rem;
+      border-radius: 100px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+    .plan-name { font-family: var(--display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .plan-price {
+      font-family: var(--display);
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 1rem 0 0.25rem;
+    }
+    .plan-price sup { font-size: 1.2rem; vertical-align: super; }
+    .plan-period { color: var(--text3); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .plan-features { list-style: none; margin-bottom: 2rem; }
     .plan-features li {
-      margin: 0.7rem 0;
       display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.875rem;
+      color: var(--text2);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
     }
-    .plan-features li::before { content: "✓"; color: var(--primary); font-weight: bold; }
-
-    /* cta final */
-    .cta-block {
+    .plan-features li::before { content: "✓"; color: var(--red); font-weight: 700; flex-shrink: 0; }
+    .plan-btn {
+      display: block;
+      width: 100%;
       text-align: center;
-      background: rgba(232,65,42,0.05);
-      border-radius: 48px;
-      padding: 4rem 2rem;
-      margin-bottom: 4rem;
-      border: 1px solid var(--border);
+      padding: 0.8rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: var(--sans);
+      transition: all 0.2s;
     }
-    .install-cmd {
+    .plan-btn-red { background: var(--red); color: white; }
+    .plan-btn-red:hover { opacity: 0.85; }
+    .plan-btn-ghost { background: var(--bg3); border: 1px solid var(--border-bright); color: var(--text2); }
+    .plan-btn-ghost:hover { border-color: var(--red); color: var(--text); }
+
+    /* ── CTA FINAL ── */
+    .cta-section {
+      padding: 6rem 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-box {
+      background: var(--bg2);
+      border: 1px solid var(--border-bright);
+      border-radius: 32px;
+      padding: 5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(232,65,42,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-box h2 {
+      font-family: var(--display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 1rem;
+    }
+    .cta-box p { color: var(--text2); font-size: 1.1rem; max-width: 480px; margin: 0 auto 2.5rem; }
+    .install-pill {
       display: inline-flex;
       align-items: center;
       gap: 1rem;
-      background: #0c0c12;
-      border: 1px solid var(--border);
-      border-radius: 80px;
-      padding: 0.6rem 1.5rem;
-      font-family: var(--font-mono);
-      margin: 1.5rem 0;
+      background: var(--bg3);
+      border: 1px solid var(--border-bright);
+      border-radius: 100px;
+      padding: 0.65rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--text2);
+      margin-bottom: 2rem;
     }
-    .copy-icon {
-      cursor: pointer;
+    .install-pill .prompt { color: var(--red); }
+    .copy-btn {
       background: none;
       border: none;
-      color: var(--text-muted);
-      font-size: 1rem;
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      padding: 0;
     }
+    .copy-btn:hover { color: var(--text); }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
+    /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8rem;
+      padding: 2.5rem 2rem;
+      position: relative;
+      z-index: 1;
     }
-    footer a { color: var(--text-secondary); text-decoration: none; margin: 0 0.5rem; }
+    .footer-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-left { color: var(--text3); font-size: 0.8rem; }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a { color: var(--text3); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text2); }
 
-    @media (max-width: 768px) {
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .feat-grid, .steps, .pricing-grid { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
       .nav-links { display: none; }
-      .mobile-menu-btn { display: block; }
-      .container { padding: 0 1.5rem; }
-      .editor-tab { font-size: 0.7rem; padding: 0.2rem 0.7rem; }
+      .mobile-btn { display: block; }
+      .hero { padding: 5rem 0 4rem; }
+      .cta-box { padding: 3rem 1.5rem; }
     }
-
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-container">
+  <div class="nav-inner">
     <a href="#" class="logo">
-      <!-- Reemplaza este span por tu logo: <img src="ruta.png" alt="Apider" style="height: 32px;"> -->
-      <span style="color: var(--primary);">✦</span> Apider
+      <img src="apider_logo.png" alt="Apider logo">
+      Apider
     </a>
     <div class="nav-links">
       <a href="#features">Features</a>
-      <a href="#integrations">Integrations</a>
+      <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
-      <a href="#">GitHub</a>
-      <a href="#pricing" class="btn-nav">Get started</a>
+      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="#pricing" class="nav-cta">Get started</a>
     </div>
-    <button class="mobile-menu-btn" id="menuBtn">☰</button>
+    <button class="mobile-btn" id="menuBtn">☰</button>
   </div>
 </nav>
 
-<main>
-  <div class="container">
-    <!-- Hero -->
-    <div class="hero">
-      <div class="hero-badge"><span class="live-dot"></span> v0.4.0 · Cloud-native runtime</div>
-      <h1>Automate APIs.<br /><em>Without</em> the mess.</h1>
-      <p>One Python SDK for Email, Telegram, Discord, Slack, Sheets. No servers, no OAuth boilerplate.</p>
-      <div class="hero-actions">
-        <a href="#pricing" class="btn btn-primary">Start for free →</a>
-        <a href="#" class="btn btn-outline">Read docs</a>
-      </div>
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-chip">
+      <span class="chip-dot"></span>
+      v0.1.2 · Live on PyPI
+    </div>
+    <h1>
+      Automate Python.<br>
+      <span class="accent">Without</span> <span class="dim">the mess.</span>
+    </h1>
+    <p class="hero-sub">
+      One SDK for Email, Telegram, Discord, Slack, and Google Sheets.
+      Write automation logic in Python — we run it in the cloud.
+    </p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn btn-red">Start for free →</a>
+      <a href="https://github.com/Apider-io" target="_blank" class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
 
-      <!-- Code editor mejorado -->
-      <div class="code-editor">
-        <div class="editor-header">
-          <span class="window-dot red"></span>
-          <span class="window-dot yellow"></span>
-          <span class="window-dot green"></span>
+    <!-- Editor -->
+    <div class="editor-wrap">
+      <div class="editor">
+        <div class="editor-bar">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
           <div class="editor-tabs">
-            <span class="editor-tab active" data-editor="email">email.py</span>
-            <span class="editor-tab" data-editor="telegram">telegram.py</span>
-            <span class="editor-tab" data-editor="sheets">sheets.py</span>
+            <button class="etab on" data-p="monitor">monitor.py</button>
+            <button class="etab" data-p="email">email.py</button>
+            <button class="etab" data-p="sheets">sheets.py</button>
           </div>
         </div>
-        <div id="editor-email" class="code-pane active">
-          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Email
+        <div id="p-monitor" class="pane on"><pre><span class="kw">from</span> apider <span class="kw">import</span> Email, Telegram, CloudScheduler
 
-<span class="comment"># Read latest unread emails</span>
-emails = Email.<span class="func">read</span>(unread_only=<span class="keyword">True</span>)
-<span class="keyword">for</span> email <span class="keyword">in</span> emails:
-    <span class="func">print</span>(<span class="string">f"From: {email.sender} - {email.subject}"</span>)
+<span class="kw">def</span> <span class="fn">monitor_inbox</span>():
+    emails <span class="op">=</span> Email.<span class="fn">read</span>(unread_only<span class="op">=</span><span class="kw">True</span>)
+    <span class="kw">if</span> emails:
+        summary <span class="op">=</span> <span class="st">"\n"</span>.join([<span class="st">f"• {e.subject}"</span> <span class="kw">for</span> e <span class="kw">in</span> emails])
+        Telegram.<span class="fn">send</span>(<span class="st">f"📬 {len(emails)} new emails:\n{summary}"</span>)
 
-<span class="comment"># Send a notification</span>
-Email.<span class="func">send</span>(
-    to=<span class="string">"team@apider.dev"</span>,
-    subject=<span class="string">"Daily digest"</span>,
-    body=<span class="string">f"You have {len(emails)} new messages."</span>
-)</pre>
-        </div>
-        <div id="editor-telegram" class="code-pane">
-          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Telegram
+<span class="cm"># Runs every 10 minutes — in the cloud, forever</span>
+CloudScheduler.<span class="fn">every_minutes</span>(<span class="nm">10</span>, monitor_inbox)</pre></div>
+        <div id="p-email" class="pane"><pre><span class="kw">from</span> apider <span class="kw">import</span> Email
 
-<span class="comment"># Send an instant alert</span>
-Telegram.<span class="func">send</span>(<span class="string">"Server alert: CPU usage 95%"</span>)
+<span class="cm"># Send</span>
+Email.<span class="fn">send</span>(
+    to<span class="op">=</span><span class="st">"team@company.com"</span>,
+    subject<span class="op">=</span><span class="st">"Daily digest"</span>,
+    body<span class="op">=</span><span class="st">"Here's your report 📊"</span>,
+    attachments<span class="op">=</span>[<span class="st">"report.pdf"</span>]
+)
 
-<span class="comment"># Poll messages from a group</span>
-messages = Telegram.<span class="func">poll</span>(limit=<span class="number">5</span>)
-<span class="keyword">for</span> msg <span class="keyword">in</span> messages:
-    <span class="func">print</span>(<span class="string">f"@{msg.from_user}: {msg.text}"</span>)</pre>
-        </div>
-        <div id="editor-sheets" class="code-pane">
-          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Sheets
+<span class="cm"># Read</span>
+emails <span class="op">=</span> Email.<span class="fn">read</span>(unread_only<span class="op">=</span><span class="kw">True</span>, mark_as_read<span class="op">=</span><span class="kw">True</span>)
+<span class="kw">for</span> e <span class="kw">in</span> emails:
+    <span class="fn">print</span>(e.subject, e.email_sender)</pre></div>
+        <div id="p-sheets" class="pane"><pre><span class="kw">from</span> apider <span class="kw">import</span> Sheets
 
-<span class="comment"># Read data as Polars DataFrame</span>
-df = Sheets.<span class="func">read</span>(sheet=<span class="string">"Sales Q1"</span>)
-high_value = df.filter(df[<span class="string">"revenue"</span>] > <span class="number">5000</span>)
+<span class="cm"># Read as Polars DataFrame with type inference</span>
+df <span class="op">=</span> Sheets.<span class="fn">read</span>(filters<span class="op">=</span>{<span class="st">"status"</span>: <span class="st">"pending"</span>})
 
-<span class="comment"># Append a new row</span>
-Sheets.<span class="func">append</span>([<span class="string">"2025-04-01"</span>, <span class="string">"Product Z"</span>, <span class="number">12999</span>])</pre>
-        </div>
-      </div>
-    </div>
+<span class="cm"># Append a new row</span>
+Sheets.<span class="fn">append</span>([<span class="st">"2026-04-23"</span>, <span class="st">"Jorge"</span>, <span class="nm">1499</span>])
 
-    <!-- Features -->
-    <div class="section reveal" id="features">
-      <div class="section-header">
-        <div class="section-badge">Why Apider</div>
-        <h2 class="section-title">Built for Python developers</h2>
-        <p class="section-sub">No more glue code. Just pure automation.</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card"><h3>1‑liner integrations</h3><p>Email.send() · Telegram.read() · Sheets.append()</p></div>
-        <div class="feature-card"><h3>Serverless by default</h3><p>Deploy to cloud with `apider deploy`. Scales infinitely.</p></div>
-        <div class="feature-card"><h3>Cron as Python</h3><p>Schedule any function: every_minute(), daily_at()</p></div>
-        <div class="feature-card"><h3>Zero secret storage</h3><p>Your keys stay in .env — we never touch them.</p></div>
-        <div class="feature-card"><h3>Pure Python</h3><p>No YAML, no DSL. Just import and use.</p></div>
-        <div class="feature-card"><h3>Extensible</h3><p>Build your own modules via simple HTTP bridges.</p></div>
-      </div>
-    </div>
-
-    <!-- Integrations marquee -->
-    <div class="section reveal" id="integrations">
-      <div class="section-header">
-        <div class="section-badge">Connect to everything</div>
-        <h2 class="section-title">One API for the tools you love</h2>
-      </div>
-      <div class="marquee">
-        <div class="marquee-content">
-          <span>Gmail</span> <span>Outlook</span> <span>Telegram</span> <span>Discord</span> <span>Slack</span>
-          <span>Google Sheets</span> <span>Webhooks</span> <span>Mastodon</span> <span>Gmail</span> <span>Outlook</span>
-          <span>Telegram</span> <span>Discord</span> <span>Slack</span> <span>Google Sheets</span> <span>Webhooks</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pricing con toggle -->
-    <div class="section reveal" id="pricing">
-      <div class="section-header">
-        <div class="section-badge">Pricing</div>
-        <h2 class="section-title">Simple, transparent</h2>
-        <p class="section-sub">Pay only for what you use. No hidden fees.</p>
-      </div>
-      <div class="pricing-toggle">
-        <button class="toggle-btn active" data-cycle="monthly">Monthly</button>
-        <button class="toggle-btn" data-cycle="yearly">Yearly (Save 20%)</button>
-      </div>
-      <div class="pricing-grid" id="pricingGrid"></div>
-    </div>
-
-    <!-- Final CTA -->
-    <div class="cta-block reveal">
-      <h2 class="section-title" style="margin-bottom: 0.5rem;">Start automating in minutes</h2>
-      <p style="color: var(--text-secondary);">Install Apider, write your first script, and run it serverlessly.</p>
-      <div class="install-cmd">
-        <span style="color: var(--primary);">$</span> pip install apider
-        <button class="copy-icon" id="copyInstallBtn">📋</button>
-      </div>
-      <div>
-        <a href="#" class="btn btn-primary">Get started free</a>
-        <a href="#" class="btn btn-outline" style="margin-left: 1rem;">GitHub</a>
+<span class="cm"># Upsert by column match</span>
+Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span class="st">"user@co.com"</span>, [<span class="st">"user@co.com"</span>, <span class="st">"Pro"</span>])</pre></div>
       </div>
     </div>
   </div>
-</main>
+</div>
 
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <div class="mtag"><span>📧</span> Gmail</div>
+    <div class="mtag"><span>📧</span> Outlook</div>
+    <div class="mtag"><span>✈️</span> Telegram</div>
+    <div class="mtag"><span>💬</span> Discord</div>
+    <div class="mtag"><span>💼</span> Slack</div>
+    <div class="mtag"><span>📊</span> Google Sheets</div>
+    <div class="mtag"><span>⏰</span> CloudScheduler</div>
+    <div class="mtag"><span>🔐</span> Zero secret storage</div>
+    <div class="mtag"><span>☁️</span> Azure Functions</div>
+    <div class="mtag"><span>🐍</span> Pure Python</div>
+    <div class="mtag"><span>📧</span> Gmail</div>
+    <div class="mtag"><span>📧</span> Outlook</div>
+    <div class="mtag"><span>✈️</span> Telegram</div>
+    <div class="mtag"><span>💬</span> Discord</div>
+    <div class="mtag"><span>💼</span> Slack</div>
+    <div class="mtag"><span>📊</span> Google Sheets</div>
+    <div class="mtag"><span>⏰</span> CloudScheduler</div>
+    <div class="mtag"><span>🔐</span> Zero secret storage</div>
+    <div class="mtag"><span>☁️</span> Azure Functions</div>
+    <div class="mtag"><span>🐍</span> Pure Python</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="s-label">Why Apider</div>
+      <h2 class="s-title">Built for Python developers<br>who hate boilerplate</h2>
+      <p class="s-sub">Stop writing 100 lines to send an email. Stop wrestling with OAuth. Just import and run.</p>
+    </div>
+    <div class="feat-grid reveal">
+      <div class="feat-card">
+        <span class="feat-icon">⚡</span>
+        <h3>One-liner integrations</h3>
+        <p>Email.send() · Telegram.send() · Sheets.append(). No setup wizards, no OAuth flows, no SDK configuration.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">☁️</span>
+        <h3>Serverless by default</h3>
+        <p>Your scripts run on Azure Functions. No servers to provision, no containers to manage, no Dockerfile.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">⏰</span>
+        <h3>Cron as Python</h3>
+        <p>CloudScheduler.every_minutes(10, fn) registers a persistent job in the cloud. No crontab, no Celery.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔐</span>
+        <h3>Zero secret storage</h3>
+        <p>Your API keys stay in .env on your machine. We never store them — they travel encrypted per-request.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📊</span>
+        <h3>Typed Sheets data</h3>
+        <p>Sheets.read() returns a Polars DataFrame with auto-detected types — integers, floats, strings. No more raw text.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔀</span>
+        <h3>Multi-channel by nature</h3>
+        <p>Mix Email + Telegram + Discord + Slack in the same script. One execution, multiple outputs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="reveal" style="text-align: center;">
+      <div class="s-label">How it works</div>
+      <h2 class="s-title">Write Python. We handle the rest.</h2>
+      <p class="s-sub" style="margin: 0 auto;">No infrastructure knowledge required. If you can write a function, you can automate anything.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Install &amp; configure</h3>
+        <p>pip install apider. Add your API keys to .env. That's it — your credentials never leave your machine.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Write your script</h3>
+        <p>Use Email, Telegram, Sheets, Discord, Slack — all as simple Python functions. No boilerplate, no classes to extend.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Schedule &amp; forget</h3>
+        <p>CloudScheduler.every_minutes(10, fn) deploys your script to Azure. It runs forever, even when your laptop is off.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="reveal" style="text-align: center;">
+      <div class="s-label">Pricing</div>
+      <h2 class="s-title">Simple, transparent pricing</h2>
+      <p class="s-sub" style="margin: 0 auto;">Pay only for what you use. No hidden fees, no credit card required to start.</p>
+    </div>
+    <div class="pricing-toggle reveal">
+      <button class="ptoggle on" data-c="monthly">Monthly</button>
+      <button class="ptoggle" data-c="yearly">Yearly · Save 20%</button>
+    </div>
+    <div class="pricing-grid reveal" id="pricingGrid"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <h2>Start automating today</h2>
+      <p>Install Apider, write your first script, and run it in the cloud — in under 5 minutes.</p>
+      <div>
+        <div class="install-pill">
+          <span class="prompt">$</span>
+          <span>pip install apider</span>
+          <button class="copy-btn" id="copyBtn" title="Copy">📋</button>
+        </div>
+      </div>
+      <div class="cta-actions">
+        <a href="#pricing" class="btn btn-red">Get started free →</a>
+        <a href="https://apider-io.github.io/docs" target="_blank" class="btn btn-ghost">Read the docs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <p>© 2025 Apider — Python automation, no infrastructure.</p>
-  <p><a href="#">GitHub</a> · <a href="#">Docs</a> · <a href="#">Twitter</a> · <a href="#">Discord</a></p>
+  <div class="footer-inner">
+    <div class="footer-left">
+      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank" style="color:var(--text2);text-decoration:none;">Jorge de la Flor</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+      <a href="https://github.com/Apider-io/apider/releases" target="_blank">Changelog</a>
+      <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
+    </div>
+  </div>
 </footer>
 
 <script>
   // Pricing data
   const plans = {
     monthly: [
-      { name: 'Free', price: 0, features: ['2,000 executions/mo', '1 scheduled job', 'All modules', 'Community support'], featured: false, cta: 'Start free' },
-      { name: 'Pro', price: 19, features: ['50,000 executions/mo', '10 scheduled jobs', 'Priority execution', 'Email support'], featured: true, cta: 'Start Pro' },
-      { name: 'Business', price: 49, features: ['500,000 executions/mo', 'Unlimited jobs', 'Dedicated SLAs', 'Priority support'], featured: false, cta: 'Contact sales' }
+      {
+        name: 'Free', price: 0, period: '/month', featured: false, cta: 'Start free', ctaClass: 'plan-btn-ghost',
+        features: ['2,000 executions / month', '1 scheduled job', 'All modules included', 'Community support']
+      },
+      {
+        name: 'Pro', price: 19, period: '/month', featured: true, cta: 'Start Pro', ctaClass: 'plan-btn-red',
+        features: ['50,000 executions / month', '10 scheduled jobs', 'Priority execution', 'Email support', 'Early access to new modules']
+      },
+      {
+        name: 'Business', price: 49, period: '/month', featured: false, cta: 'Contact sales', ctaClass: 'plan-btn-ghost',
+        features: ['500,000 executions / month', 'Unlimited scheduled jobs', 'Dedicated SLAs', 'Priority support', 'Custom integrations']
+      }
     ],
     yearly: [
-      { name: 'Free', price: 0, features: ['2,000 executions/mo', '1 scheduled job', 'All modules', 'Community support'], featured: false, cta: 'Start free' },
-      { name: 'Pro', price: 182, features: ['50,000 executions/mo', '10 scheduled jobs', 'Priority execution', 'Email support'], featured: true, cta: 'Start Pro yearly' },
-      { name: 'Business', price: 470, features: ['500,000 executions/mo', 'Unlimited jobs', 'Dedicated SLAs', 'Priority support'], featured: false, cta: 'Contact sales' }
+      {
+        name: 'Free', price: 0, period: '/year', featured: false, cta: 'Start free', ctaClass: 'plan-btn-ghost',
+        features: ['2,000 executions / month', '1 scheduled job', 'All modules included', 'Community support']
+      },
+      {
+        name: 'Pro', price: 182, period: '/year', featured: true, cta: 'Start Pro yearly', ctaClass: 'plan-btn-red',
+        features: ['50,000 executions / month', '10 scheduled jobs', 'Priority execution', 'Email support', 'Early access to new modules']
+      },
+      {
+        name: 'Business', price: 470, period: '/year', featured: false, cta: 'Contact sales', ctaClass: 'plan-btn-ghost',
+        features: ['500,000 executions / month', 'Unlimited scheduled jobs', 'Dedicated SLAs', 'Priority support', 'Custom integrations']
+      }
     ]
   };
 
   function renderPricing(cycle) {
-    const container = document.getElementById('pricingGrid');
-    const data = plans[cycle];
-    container.innerHTML = data.map(plan => `
-      <div class="pricing-card ${plan.featured ? 'featured' : ''}">
-        <h3>${plan.name}</h3>
-        <div class="price">$${plan.price} <small>/${cycle === 'monthly' ? 'mo' : 'year'}</small></div>
-        <ul class="plan-features">${plan.features.map(f => `<li>${f}</li>`).join('')}</ul>
-        <a href="#" class="btn ${plan.featured ? 'btn-primary' : 'btn-outline'}" style="width:100%; text-align:center;">${plan.cta}</a>
+    const grid = document.getElementById('pricingGrid');
+    grid.innerHTML = plans[cycle].map(p => `
+      <div class="plan ${p.featured ? 'featured' : ''}">
+        ${p.featured ? '<div class="featured-badge">Most popular</div>' : ''}
+        <div class="plan-name">${p.name}</div>
+        <div class="plan-price"><sup>$</sup>${p.price}</div>
+        <div class="plan-period">${p.period}</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+        <button class="plan-btn ${p.ctaClass}">${p.cta}</button>
       </div>
     `).join('');
   }
   renderPricing('monthly');
 
-  // Toggle monthly/yearly
-  document.querySelectorAll('.toggle-btn').forEach(btn => {
+  document.querySelectorAll('.ptoggle').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderPricing(btn.getAttribute('data-cycle'));
+      document.querySelectorAll('.ptoggle').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      renderPricing(btn.dataset.c);
     });
   });
 
   // Editor tabs
-  const tabs = document.querySelectorAll('.editor-tab');
-  const panes = {
-    email: document.getElementById('editor-email'),
-    telegram: document.getElementById('editor-telegram'),
-    sheets: document.getElementById('editor-sheets')
-  };
-  tabs.forEach(tab => {
+  document.querySelectorAll('.etab').forEach(tab => {
     tab.addEventListener('click', () => {
-      const target = tab.getAttribute('data-editor');
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      Object.values(panes).forEach(p => p.classList.remove('active'));
-      panes[target].classList.add('active');
+      document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+      tab.classList.add('on');
+      document.getElementById('p-' + tab.dataset.p).classList.add('on');
     });
   });
 
-  // Copy command
-  document.getElementById('copyInstallBtn').addEventListener('click', () => {
+  // Copy
+  document.getElementById('copyBtn').addEventListener('click', () => {
     navigator.clipboard.writeText('pip install apider');
-    const btn = document.getElementById('copyInstallBtn');
+    const btn = document.getElementById('copyBtn');
     btn.textContent = '✓';
     setTimeout(() => btn.textContent = '📋', 2000);
   });
@@ -608,28 +910,15 @@ Sheets.<span class="func">append</span>([<span class="string">"2025-04-01"</span
   // Mobile menu
   const menuBtn = document.getElementById('menuBtn');
   const navLinks = document.querySelector('.nav-links');
-  if(menuBtn) {
-    menuBtn.addEventListener('click', () => {
-      if(navLinks.style.display === 'flex') navLinks.style.display = 'none';
-      else navLinks.style.display = 'flex';
-    });
-  }
-
-  // Smooth scroll
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  menuBtn.addEventListener('click', () => {
+    navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
   });
 
   // Reveal on scroll
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.1 });
-  reveals.forEach(r => observer.observe(r));
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 </body>
 </html>
