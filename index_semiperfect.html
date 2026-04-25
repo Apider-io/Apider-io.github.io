@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Apider — Python automation without infrastructure. One SDK for Email, Telegram, Discord, Slack, Sheets. Serverless, cloud-native, zero boilerplate.">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Apider — Python automation without infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #e8412a;
+      --primary-dark: #c22c1a;
+      --primary-glow: rgba(232, 65, 42, 0.4);
+      --bg-dark: #050508;
+      --bg-card: rgba(18, 18, 26, 0.7);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --text-secondary: #b0b0c0;
+      --text-muted: #6c6c7a;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* particle canvas */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* glassmorphism nav */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(5, 5, 8, 0.6);
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 1.3rem;
+      text-decoration: none;
+      background: linear-gradient(135deg, #fff, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .btn-nav {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+    }
+    .mobile-menu-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+    /* main content relative to canvas */
+    main { position: relative; z-index: 2; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* buttons - smooth, rounded, no grid feeling */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      border: none;
+      backdrop-filter: blur(4px);
+    }
+    .btn-primary {
+      background: linear-gradient(105deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 8px 20px rgba(232, 65, 42, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 30px rgba(232, 65, 42, 0.4);
+    }
+    .btn-outline {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      background: rgba(232, 65, 42, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* hero */
+    .hero {
+      padding: 6rem 0 8rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-glass);
+      border-radius: 100px;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      margin-bottom: 2rem;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 60%, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .hero-actions { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+
+    /* code editor glass */
+    .code-editor {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(12, 12, 18, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.5);
+    }
+    .editor-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .window-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .red { background: #ff5f57; }
+    .yellow { background: #febc2e; }
+    .green { background: #2ecc71; }
+    .editor-tabs { display: flex; gap: 1rem; margin-left: 1rem; }
+    .editor-tab {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+    }
+    .editor-tab.active { color: var(--primary); background: rgba(232,65,42,0.15); }
+    .code-pane { padding: 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.6; overflow-x: auto; }
+    .code-pane pre { white-space: pre-wrap; font-family: var(--font-mono); }
+    .keyword { color: #c792ea; }
+    .func { color: #82aaff; }
+    .string { color: #c3e88d; }
+    .number { color: #f78c6c; }
+    .comment { color: #6c6c7a; }
+
+    /* stats section */
+    .stats-grid {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 4rem 0;
+      text-align: center;
+    }
+    .stat-item h3 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .stat-item p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* features glass */
+    .section { padding: 5rem 0; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-badge {
+      display: inline-block;
+      background: rgba(232,65,42,0.15);
+      backdrop-filter: blur(4px);
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-sub { color: var(--text-secondary); max-width: 640px; margin: 0 auto; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 32px;
+      padding: 1.8rem;
+      transition: all 0.3s;
+    }
+    .glass-card:hover { transform: translateY(-6px); border-color: var(--primary-glow); }
+    .glass-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .glass-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .glass-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+    /* integrations marquee */
+    .marquee {
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 2rem 0;
+    }
+    .marquee-content {
+      display: inline-block;
+      animation: marquee 20s linear infinite;
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+    .marquee-content span { margin: 0 1rem; background: rgba(255,255,255,0.05); padding: 0.3rem 1rem; border-radius: 40px; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* pricing toggle */
+    .pricing-toggle { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+    .toggle-btn {
+      background: rgba(255,255,255,0.05);
+      border: none;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .toggle-btn.active { background: var(--primary); color: white; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 32px;
+      padding: 2rem;
+      transition: transform 0.2s;
+    }
+    .pricing-card.featured { border-color: var(--primary); background: linear-gradient(145deg, rgba(232,65,42,0.1), rgba(0,0,0,0.4)); }
+    .price { font-size: 3rem; font-weight: 800; margin: 1rem 0; }
+    .price small { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+    .plan-features { list-style: none; margin: 1.5rem 0; }
+    .plan-features li { margin: 0.7rem 0; display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem; color: var(--text-secondary); }
+    .plan-features li::before { content: "✨"; color: var(--primary); }
+
+    /* cta */
+    .cta-glow {
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(232,65,42,0.15), transparent);
+      border-radius: 48px;
+      padding: 4rem 2rem;
+      margin-bottom: 4rem;
+    }
+    .install-cmd {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-glass);
+      border-radius: 80px;
+      padding: 0.5rem 1.5rem;
+      font-family: var(--font-mono);
+      margin: 1.5rem 0;
+    }
+    .copy-icon { cursor: pointer; background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; }
+
+    footer {
+      border-top: 1px solid var(--border-glass);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .container { padding: 0 1.5rem; }
+      .stats-grid { flex-direction: column; align-items: center; }
+    }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+  <div class="nav-container">
+    <a href="#" class="logo">✦ Apider</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">GitHub</a>
+      <a href="#pricing" class="btn-nav">Get started →</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn">☰</button>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge"><span class="live-dot"></span> v0.4.0 · Cloud-native runtime</div>
+      <h1>Automate APIs.<br />Zero friction.</h1>
+      <p>One Python SDK for Email, Telegram, Discord, Slack, Sheets. No servers, no OAuth nightmares.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">✨ Start for free →</a>
+        <a href="#" class="btn btn-outline">Read docs</a>
+      </div>
+
+      <!-- interactive code editor -->
+      <div class="code-editor">
+        <div class="editor-header">
+          <span class="window-dot red"></span>
+          <span class="window-dot yellow"></span>
+          <span class="window-dot green"></span>
+          <div class="editor-tabs">
+            <span class="editor-tab active" data-editor="email">email.py</span>
+            <span class="editor-tab" data-editor="telegram">telegram.py</span>
+            <span class="editor-tab" data-editor="sheets">sheets.py</span>
+          </div>
+        </div>
+        <div id="editor-email" class="code-pane">
+          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Email
+
+<span class="comment"># Read latest unread emails</span>
+emails = Email.<span class="func">read</span>(unread_only=<span class="keyword">True</span>)
+<span class="keyword">for</span> email <span class="keyword">in</span> emails:
+    <span class="func">print</span>(<span class="string">f"From: {email.sender} - {email.subject}"</span>)
+
+<span class="comment"># Send a notification</span>
+Email.<span class="func">send</span>(
+    to=<span class="string">"team@apider.dev"</span>,
+    subject=<span class="string">"Daily digest"</span>,
+    body=<span class="string">f"You have {len(emails)} new messages."</span>
+)</pre>
+        </div>
+        <div id="editor-telegram" class="code-pane" style="display:none;">
+          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Telegram
+
+<span class="comment"># Send an instant alert</span>
+Telegram.<span class="func">send</span>(<span class="string">"🚨 Server alert: CPU usage 95%"</span>)
+
+<span class="comment"># Poll messages from a group</span>
+messages = Telegram.<span class="func">poll</span>(limit=<span class="number">5</span>)
+<span class="keyword">for</span> msg <span class="keyword">in</span> messages:
+    <span class="func">print</span>(<span class="string">f"@{msg.from_user}: {msg.text}"</span>)</pre>
+        </div>
+        <div id="editor-sheets" class="code-pane" style="display:none;">
+          <pre><span class="keyword">from</span> apider <span class="keyword">import</span> Sheets
+
+<span class="comment"># Read data as Polars DataFrame</span>
+df = Sheets.<span class="func">read</span>(sheet=<span class="string">"Sales Q1"</span>)
+high_value = df.filter(df[<span class="string">"revenue"</span>] > <span class="number">5000</span>)
+
+<span class="comment"># Append a new row</span>
+Sheets.<span class="func">append</span>([<span class="string">"2025-04-01"</span>, <span class="string">"Product Z"</span>, <span class="number">12999</span>])</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- stats counters -->
+    <div class="stats-grid reveal">
+      <div class="stat-item"><h3 id="stat1">0+</h3><p>executions / month</p></div>
+      <div class="stat-item"><h3 id="stat2">0+</h3><p>developers</p></div>
+      <div class="stat-item"><h3 id="stat3">0ms</h3><p>avg response</p></div>
+    </div>
+
+    <!-- features -->
+    <div class="section reveal" id="features">
+      <div class="section-header">
+        <div class="section-badge">Why Apider</div>
+        <h2 class="section-title">Built for modern Pythonistas</h2>
+        <p class="section-sub">No more glue code. Just pure automation.</p>
+      </div>
+      <div class="features-grid">
+        <div class="glass-card"><div class="icon">⚡</div><h3>1-liner integrations</h3><p>Email.send() · Telegram.read() · Sheets.append()</p></div>
+        <div class="glass-card"><div class="icon">☁️</div><h3>Serverless by default</h3><p>Deploy to cloud with `apider deploy`. Scales infinitely.</p></div>
+        <div class="glass-card"><div class="icon">⏰</div><h3>Cron as Python</h3><p>Schedule any function: every_minute(), daily_at(), cron()</p></div>
+        <div class="glass-card"><div class="icon">🔒</div><h3>Zero secret storage</h3><p>Your keys stay in .env — we never touch them.</p></div>
+        <div class="glass-card"><div class="icon">🐍</div><h3>Pure Python</h3><p>No YAML, no DSL. Just import and use.</p></div>
+        <div class="glass-card"><div class="icon">🔌</div><h3>Extensible</h3><p>Build your own modules via simple HTTP bridges.</p></div>
+      </div>
+    </div>
+
+    <!-- integrations marquee -->
+    <div class="section reveal" id="integrations">
+      <div class="section-header">
+        <div class="section-badge">Supported platforms</div>
+        <h2 class="section-title">Connect to everything</h2>
+      </div>
+      <div class="marquee">
+        <div class="marquee-content">
+          <span>📧 Gmail</span> <span>📧 Outlook</span> <span>📨 Telegram</span> <span>💬 Discord</span> <span>💼 Slack</span>
+          <span>📊 Google Sheets</span> <span>🌐 Webhooks</span> <span>🐘 Mastodon</span> <span>📧 Gmail</span> <span>📧 Outlook</span> <span>📨 Telegram</span> <span>💬 Discord</span> <span>💼 Slack</span>
+          <span>📊 Google Sheets</span> <span>🌐 Webhooks</span> <span>🐘 Mastodon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- pricing with toggle -->
+    <div class="section reveal" id="pricing">
+      <div class="section-header">
+        <div class="section-badge">Pricing</div>
+        <h2 class="section-title">Simple, transparent</h2>
+        <p class="section-sub">Pay only for what you use. No hidden fees.</p>
+      </div>
+      <div class="pricing-toggle">
+        <button class="toggle-btn active" data-cycle="monthly">Monthly</button>
+        <button class="toggle-btn" data-cycle="yearly">Yearly (Save 20%)</button>
+      </div>
+      <div class="pricing-grid" id="pricingGrid">
+        <!-- filled by js -->
+      </div>
+    </div>
+
+    <!-- final CTA -->
+    <div class="cta-glow reveal">
+      <h2 class="section-title" style="margin-bottom: 0.5rem;">Start automating in minutes</h2>
+      <p style="color: var(--text-secondary);">Install Apider, write your first script, and run it serverlessly.</p>
+      <div class="install-cmd">
+        <span style="color: var(--primary);">$</span> pip install apider
+        <button class="copy-icon" id="copyInstallBtn">📋</button>
+      </div>
+      <div>
+        <a href="#" class="btn btn-primary">✨ Get started free</a>
+        <a href="#" class="btn btn-outline" style="margin-left: 1rem;">GitHub →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 Apider — Python automation, no infrastructure.</p>
+  <p><a href="#">GitHub</a> · <a href="#">Docs</a> · <a href="#">Twitter</a> · <a href="#">Discord</a></p>
+</footer>
+
+<script>
+  // particles
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let particles = [];
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  function initParticles() {
+    particles = [];
+    const count = Math.min(100, Math.floor(width * height / 8000));
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2 + 1,
+        speedX: (Math.random() - 0.5) * 0.5,
+        speedY: (Math.random() - 0.5) * 0.3,
+        color: `rgba(232, 65, 42, ${Math.random() * 0.3 + 0.1})`
+      });
+    }
+  }
+
+  function drawParticles() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, width, height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.x += p.speedX;
+      p.y += p.speedY;
+      if (p.x < 0) p.x = width;
+      if (p.x > width) p.x = 0;
+      if (p.y < 0) p.y = height;
+      if (p.y > height) p.y = 0;
+    }
+    requestAnimationFrame(drawParticles);
+  }
+
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  resize();
+  initParticles();
+  drawParticles();
+
+  // counter animation
+  function animateNumber(element, target, suffix = '') {
+    let current = 0;
+    const step = Math.ceil(target / 60);
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        element.innerText = target.toLocaleString() + suffix;
+        clearInterval(interval);
+      } else {
+        element.innerText = current.toLocaleString() + suffix;
+      }
+    }, 20);
+  }
+  animateNumber(document.getElementById('stat1'), 1250000, '+');
+  animateNumber(document.getElementById('stat2'), 8400, '+');
+  document.getElementById('stat3').innerText = '42ms';
+
+  // pricing data
+  const plans = {
+    monthly: [
+      { name: 'Free', price: 0, features: ['2,000 executions/mo', '1 scheduled job', 'All modules', 'Community support'], featured: false, cta: 'Start free' },
+      { name: 'Pro', price: 19, features: ['50,000 executions/mo', '10 scheduled jobs', 'Priority execution', 'Email support'], featured: true, cta: 'Start Pro' },
+      { name: 'Business', price: 49, features: ['500,000 executions/mo', 'Unlimited jobs', 'Dedicated SLAs', 'Priority support'], featured: false, cta: 'Contact sales' }
+    ],
+    yearly: [
+      { name: 'Free', price: 0, features: ['2,000 executions/mo', '1 scheduled job', 'All modules', 'Community support'], featured: false, cta: 'Start free' },
+      { name: 'Pro', price: 182, features: ['50,000 executions/mo', '10 scheduled jobs', 'Priority execution', 'Email support'], featured: true, cta: 'Start Pro yearly' },
+      { name: 'Business', price: 470, features: ['500,000 executions/mo', 'Unlimited jobs', 'Dedicated SLAs', 'Priority support'], featured: false, cta: 'Contact sales' }
+    ]
+  };
+
+  function renderPricing(cycle) {
+    const container = document.getElementById('pricingGrid');
+    const data = plans[cycle];
+    container.innerHTML = data.map(plan => `
+      <div class="pricing-card ${plan.featured ? 'featured' : ''}">
+        <h3>${plan.name}</h3>
+        <div class="price">$${plan.price} <small>/${cycle === 'monthly' ? 'mo' : 'year'}</small></div>
+        <ul class="plan-features">${plan.features.map(f => `<li>${f}</li>`).join('')}</ul>
+        <a href="#" class="btn ${plan.featured ? 'btn-primary' : 'btn-outline'}" style="width:100%; text-align:center;">${plan.cta}</a>
+      </div>
+    `).join('');
+  }
+  renderPricing('monthly');
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPricing(btn.getAttribute('data-cycle'));
+    });
+  });
+
+  // editor tabs
+  const tabs = document.querySelectorAll('.editor-tab');
+  const panes = {
+    email: document.getElementById('editor-email'),
+    telegram: document.getElementById('editor-telegram'),
+    sheets: document.getElementById('editor-sheets')
+  };
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-editor');
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      Object.values(panes).forEach(p => p.style.display = 'none');
+      panes[target].style.display = 'block';
+    });
+  });
+
+  // copy install command
+  document.getElementById('copyInstallBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('pip install apider');
+    const btn = document.getElementById('copyInstallBtn');
+    btn.textContent = '✅';
+    setTimeout(() => btn.textContent = '📋', 2000);
+  });
+
+  // mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.querySelector('.nav-links');
+  if(menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      if(navLinks.style.display === 'flex') navLinks.style.display = 'none';
+      else navLinks.style.display = 'flex';
+    });
+  }
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+</script>
+</body>
+</html>

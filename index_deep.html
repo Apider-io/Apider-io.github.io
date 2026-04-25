@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Apider — Python automation without infrastructure. Connect Email, Telegram, Discord, Slack, Sheets in one line. Cloud-native runtime, zero servers.">
+  <meta name="theme-color" content="#0d0d0f">
+  <title>Apider — Python automation without infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --red: #e8412a;
+      --red-dark: #b83020;
+      --red-soft: rgba(232, 65, 42, 0.12);
+      --bg: #0a0a0c;
+      --bg-elevated: #101014;
+      --bg-card: #15151c;
+      --border: #23232e;
+      --text: #f1f1f1;
+      --text-secondary: #a1a1aa;
+      --text-muted: #5e5e6e;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    /* utility */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      padding: 5rem 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: var(--red-soft);
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      margin-bottom: 1.2rem;
+      border: 0.5px solid rgba(232, 65, 42, 0.3);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 2px 8px rgba(232, 65, 42, 0.2);
+    }
+    .btn-primary:hover {
+      background: var(--red-dark);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: var(--text-secondary);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* navbar */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(10,10,12,0.75);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1.2rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span {
+      color: var(--red);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+    }
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .container {
+        padding: 0 1.5rem;
+      }
+      .section {
+        padding: 3rem 0;
+      }
+    }
+
+    /* hero */
+    .hero {
+      padding: 5rem 0 6rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    .hero-badge .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.8);}
+      100% { opacity: 1; transform: scale(1.2);}
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 em {
+      color: var(--red);
+      font-style: normal;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    /* code window */
+    .code-window {
+      max-width: 780px;
+      margin: 0 auto;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: left;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+    .window-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .red { background: #ff5f57; }
+    .yellow { background: #febc2e; }
+    .green { background: #2ecc71; }
+    .code-filename {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .code-body {
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .keyword { color: #c792ea; }
+    .func { color: #82aaff; }
+    .string { color: #c3e88d; }
+    .number { color: #f78c6c; }
+    .comment { color: #5a5a6e; }
+
+    /* features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.8rem;
+      transition: all 0.25s;
+    }
+    .feature-card:hover {
+      border-color: var(--red-soft);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* modules list */
+    .modules-showcase {
+      background: var(--bg-elevated);
+      border-radius: 28px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .module-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.8rem 1.2rem;
+    }
+    .module-emoji {
+      font-size: 1.5rem;
+    }
+    .module-info h4 {
+      font-size: 1rem;
+    }
+    .module-info p {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+    .status-live {
+      margin-left: auto;
+      font-size: 0.65rem;
+      background: rgba(46, 204, 113, 0.15);
+      color: #2ecc71;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    /* pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: transform 0.2s;
+    }
+    .pricing-card.featured {
+      border-color: var(--red);
+      background: linear-gradient(145deg, #15151c, #101014);
+    }
+    .price {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.2rem;
+    }
+    .price small {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .plan-features {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+    .plan-features li {
+      margin: 0.7rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .plan-features li::before {
+      content: "✓";
+      color: var(--red);
+    }
+
+    /* CTA section */
+    .cta-block {
+      text-align: center;
+      background: radial-gradient(circle at 30% 10%, rgba(232,65,42,0.08), transparent 70%);
+      border-radius: 48px;
+      padding: 4rem 2rem;
+    }
+    .install-command {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 60px;
+      font-family: var(--font-mono);
+      margin: 1.5rem 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .nav-container {
+        padding: 0.8rem 1.2rem;
+      }
+      .hero {
+        padding: 3rem 0 4rem;
+      }
+      .code-body {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="#" class="logo">
+      🔴 <span>Apider</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#modules">Integrations</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">GitHub</a>
+      <a href="#pricing" class="btn btn-primary" style="padding: 0.5rem 1.2rem;">Get started</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn">☰</button>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        <span>v0.2.0 · Cloud-native runtime</span>
+      </div>
+      <h1>Automate APIs.<br /> <em>Without</em> the mess.</h1>
+      <p>One Python SDK for Email, Telegram, Discord, Slack, Sheets. No servers, no OAuth boilerplate, no infra headaches.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">Start for free →</a>
+        <a href="#" class="btn btn-outline">Read docs</a>
+      </div>
+
+      <div class="code-window">
+        <div class="code-header">
+          <span class="window-dot red"></span>
+          <span class="window-dot yellow"></span>
+          <span class="window-dot green"></span>
+          <span class="code-filename">automation.py</span>
+        </div>
+        <div class="code-body">
+          <span class="keyword">from</span> apider <span class="keyword">import</span> Email, Telegram, Sheets, CloudScheduler<br><br>
+          <span class="keyword">def</span> <span class="func">daily_report</span>():<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;emails = Email.<span class="func">read</span>(unread_only=<span class="keyword">True</span>)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Sheets.<span class="func">append</span>([e.subject <span class="keyword">for</span> e <span class="keyword">in</span> emails])<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Telegram.<span class="func">send</span>(<span class="string">f"📬 {len(emails)} new emails"</span>)<br><br>
+          <span class="comment"># Runs on Azure Functions — zero infrastructure</span><br>
+          CloudScheduler.<span class="func">daily_at</span>(<span class="string">"09:00"</span>, daily_report)
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section" id="features">
+      <div class="section-header">
+        <div class="section-badge">Why Apider</div>
+        <h2 class="section-title">Stop writing infrastructure.<br />Focus on logic.</h2>
+        <p class="section-sub">From OAuth to webhooks — we handle the plumbing so you can ship faster.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Zero boilerplate</h3><p>Email.send(), Telegram.read() — one line per integration. No config files.</p></div>
+        <div class="feature-card"><div class="feature-icon">☁️</div><h3>Cloud-native</h3><p>Deploy to serverless with `apider deploy`. Scales automatically, pay only for runs.</p></div>
+        <div class="feature-card"><div class="feature-icon">⏰</div><h3>Built-in scheduler</h3><p>cron, intervals, or triggers — schedule any Python function in seconds.</p></div>
+        <div class="feature-card"><div class="feature-icon">🔒</div><h3>Your keys, your control</h3><p>Secrets stay in .env. We never store them — just execute your code.</p></div>
+        <div class="feature-card"><div class="feature-icon">🐍</div><h3>Pure Python</h3><p>No YAML, no GUIs. Just the language you already love.</p></div>
+        <div class="feature-card"><div class="feature-icon">🔌</div><h3>Growing ecosystem</h3><p>Email, Telegram, Discord, Slack, Sheets + more coming monthly.</p></div>
+      </div>
+    </div>
+
+    <!-- MODULES / INTEGRATIONS -->
+    <div class="section" id="modules">
+      <div class="section-header">
+        <div class="section-badge">Integrations</div>
+        <h2 class="section-title">Everything you need,<br />one interface.</h2>
+        <p class="section-sub">Connect to the most popular services with a consistent API.</p>
+      </div>
+      <div class="modules-showcase">
+        <div class="modules-grid">
+          <div class="module-item"><div class="module-emoji">📧</div><div class="module-info"><h4>Email</h4><p>send / read</p></div><span class="status-live">live</span></div>
+          <div class="module-item"><div class="module-emoji">📨</div><div class="module-info"><h4>Telegram</h4><p>send / poll</p></div><span class="status-live">live</span></div>
+          <div class="module-item"><div class="module-emoji">💬</div><div class="module-info"><h4>Discord</h4><p>webhooks</p></div><span class="status-live">live</span></div>
+          <div class="module-item"><div class="module-emoji">💼</div><div class="module-info"><h4>Slack</h4><p>messages / files</p></div><span class="status-live">live</span></div>
+          <div class="module-item"><div class="module-emoji">📊</div><div class="module-info"><h4>Google Sheets</h4><p>read/write/upsert</p></div><span class="status-live">live</span></div>
+          <div class="module-item"><div class="module-emoji">🌐</div><div class="module-info"><h4>Webhooks</h4><p>incoming / outgoing</p></div><span class="status-live" style="background: rgba(232,65,42,0.15); color:#e8412a;">beta</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="section" id="pricing">
+      <div class="section-header">
+        <div class="section-badge">Pricing</div>
+        <h2 class="section-title">Simple, fair, no surprises.</h2>
+        <p class="section-sub">Start free, upgrade as you grow. Only pay for executions.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0 <small>/month</small></div>
+          <ul class="plan-features">
+            <li>2,000 executions/month</li>
+            <li>1 scheduled job</li>
+            <li>All modules</li>
+            <li>Community support</li>
+          </ul>
+          <a href="#" class="btn btn-outline" style="width:100%; text-align:center;">Get started</a>
+        </div>
+        <div class="pricing-card featured">
+          <h3>Pro</h3>
+          <div class="price">$19 <small>/month</small></div>
+          <ul class="plan-features">
+            <li>50,000 executions/month</li>
+            <li>10 scheduled jobs</li>
+            <li>Priority execution</li>
+            <li>Email support</li>
+          </ul>
+          <a href="#" class="btn btn-primary" style="width:100%; text-align:center;">Start Pro</a>
+        </div>
+        <div class="pricing-card">
+          <h3>Business</h3>
+          <div class="price">$49 <small>/month</small></div>
+          <ul class="plan-features">
+            <li>500,000 executions/month</li>
+            <li>Unlimited jobs</li>
+            <li>Dedicated SLAs</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#" class="btn btn-outline" style="width:100%; text-align:center;">Contact sales</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div class="cta-block" style="margin-bottom: 4rem;">
+      <h2 class="section-title" style="margin-bottom: 0.5rem;">Start shipping automations today</h2>
+      <p style="color: var(--text-secondary);">Install Apider, write your first script, and run it in the cloud in 5 minutes.</p>
+      <div class="install-command">
+        <span style="color: var(--red);">$</span> pip install apider
+        <span style="background: var(--bg); padding: 0.2rem 0.5rem; border-radius: 6px;">🐍 3.10+</span>
+      </div>
+      <div>
+        <a href="#" class="btn btn-primary">Read documentation →</a>
+        <a href="#" class="btn btn-outline" style="margin-left: 0.8rem;">View GitHub</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 Apider — Built for developers who hate boilerplate.</p>
+  <p>
+    <a href="#">GitHub</a> · <a href="#">Docs</a> · <a href="#">Twitter</a> · <a href="#">Status</a>
+  </p>
+</footer>
+
+<script>
+  // Mobile menu simple toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.querySelector('.nav-links');
+  if(menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      if(navLinks.style.display === 'flex') navLinks.style.display = 'none';
+      else navLinks.style.display = 'flex';
+    });
+  }
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
