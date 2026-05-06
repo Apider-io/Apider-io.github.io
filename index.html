@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Apider — Python automation without infrastructure. One SDK for Email, Telegram, Discord, Slack, Sheets. Serverless, cloud-native, zero boilerplate.">
   <title>Apider — Python automation without infrastructure</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -21,11 +18,10 @@
       --border: rgba(255,255,255,0.07);
       --border-bright: rgba(255,255,255,0.14);
       --text: #f0f0f2;
-      --text2: #9090a0;
-      --text3: #55556a;
-      --mono: 'DM Mono', monospace;
-      --sans: 'Space Grotesk', sans-serif;
-      --display: 'Syne', sans-serif;
+      --text2: #b0b0c0;
+      --text3: #7a7a8a;
+      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
@@ -34,7 +30,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
-      line-height: 1.6;
+      line-height: 1.5;
       overflow-x: hidden;
     }
 
@@ -76,7 +72,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 0.9rem 2rem;
     }
@@ -86,10 +82,9 @@
       gap: 0.7rem;
       text-decoration: none;
       color: var(--text);
-      font-family: var(--display);
+      font-weight: 700;
       font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
     }
     .logo img { width: 32px; height: 32px; border-radius: 8px; }
     .nav-links {
@@ -100,9 +95,8 @@
     .nav-links a {
       color: var(--text2);
       text-decoration: none;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      letter-spacing: 0.01em;
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--text); }
@@ -112,20 +106,20 @@
       padding: 0.5rem 1.25rem;
       border-radius: 8px;
       font-weight: 600 !important;
-      font-size: 0.85rem !important;
+      font-size: 0.9rem !important;
       transition: opacity 0.2s !important;
     }
     .nav-cta:hover { opacity: 0.85; }
-    .mobile-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+    .mobile-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
 
     /* ── CONTAINER ── */
-    .wrap { max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
 
     /* ── HERO ── */
     .hero {
       position: relative;
       z-index: 1;
-      padding: 7rem 0 5rem;
+      padding: 5rem 0 3rem;
       text-align: center;
     }
     .hero-chip {
@@ -135,15 +129,16 @@
       background: var(--bg3);
       border: 1px solid var(--border-bright);
       border-radius: 100px;
-      padding: 0.35rem 1rem;
+      padding: 0.5rem 1.25rem;
       font-family: var(--mono);
-      font-size: 0.72rem;
+      font-size: 0.9rem;
+      font-weight: 500;
       color: var(--text2);
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       animation: fadeUp 0.6s ease both;
     }
     .chip-dot {
-      width: 7px; height: 7px;
+      width: 8px; height: 8px;
       background: #2ecc71;
       border-radius: 50%;
       box-shadow: 0 0 6px #2ecc71;
@@ -152,23 +147,22 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
     .hero h1 {
-      font-family: var(--display);
-      font-size: clamp(3.5rem, 9vw, 6.5rem);
       font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.0;
-      margin-bottom: 1.8rem;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
       animation: fadeUp 0.6s 0.1s ease both;
     }
     .hero h1 .accent { color: var(--red); }
     .hero h1 .dim { color: var(--text3); }
 
     .hero-sub {
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       color: var(--text2);
-      max-width: 560px;
-      margin: 0 auto 3rem;
-      line-height: 1.7;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      line-height: 1.5;
       animation: fadeUp 0.6s 0.2s ease both;
     }
 
@@ -177,7 +171,7 @@
       gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 5rem;
+      margin-bottom: 4rem;
       animation: fadeUp 0.6s 0.3s ease both;
     }
 
@@ -192,9 +186,9 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.8rem 2rem;
-      border-radius: 10px;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       text-decoration: none;
       cursor: pointer;
       border: none;
@@ -214,11 +208,10 @@
     }
     .btn-ghost:hover { border-color: var(--red); color: var(--text); }
 
-    /* ── CODE EDITOR ── */
+    /* ── CODE EDITOR (WIDE, NOT CENTERED) ── */
     .editor-wrap {
-      max-width: 900px;
-      margin: 0 auto;
-      animation: fadeUp 0.6s 0.4s ease both;
+      width: 100%;
+      text-align: left;
     }
     .editor {
       background: var(--bg2);
@@ -234,6 +227,7 @@
       padding: 0.85rem 1.25rem;
       background: var(--bg3);
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
     }
     .dot { width: 12px; height: 12px; border-radius: 50%; }
     .dot-r { background: #ff5f57; }
@@ -241,33 +235,44 @@
     .dot-g { background: #28c840; }
     .editor-tabs {
       display: flex;
-      gap: 0.25rem;
+      gap: 0.5rem;
       margin-left: auto;
     }
     .etab {
       font-family: var(--mono);
-      font-size: 0.75rem;
-      padding: 0.35rem 0.9rem;
-      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.6rem 1.3rem;
+      border-radius: 40px;
       cursor: pointer;
-      color: var(--text3);
-      background: transparent;
-      border: 1px solid transparent;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text2);
       transition: all 0.2s;
     }
-    .etab:hover { color: var(--text2); }
-    .etab.on { background: var(--red); color: white; border-color: var(--red); }
+    .etab:hover {
+      background: rgba(232,65,42,0.2);
+      border-color: var(--red);
+      color: var(--text);
+    }
+    .etab.on {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+      box-shadow: 0 0 8px var(--red-glow);
+    }
     .pane {
       display: none;
-      padding: 1.75rem 2rem;
+      padding: 2rem;
       font-family: var(--mono);
-      font-size: 0.82rem;
-      line-height: 1.8;
-      min-height: 180px;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      background: #0a0a0e;
+      overflow-x: auto;
     }
     .pane.on { display: block; }
-    .pane pre { margin: 0; white-space: pre-wrap; }
-    .kw { color: #c792ea; }
+    .pane pre { margin: 0; white-space: pre-wrap; font-family: inherit; }
+    .kw { color: #c792ea; font-weight: 500; }
     .fn { color: #82aaff; }
     .st { color: #c3e88d; }
     .nm { color: #f78c6c; }
@@ -278,77 +283,77 @@
     .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
 
     /* ── SECTION ── */
-    section { position: relative; z-index: 1; padding: 6rem 0; }
+    section { position: relative; z-index: 1; padding: 5rem 0; }
     .s-label {
       display: inline-block;
       font-family: var(--mono);
-      font-size: 0.72rem;
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--red);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 1rem;
     }
     .s-title {
-      font-family: var(--display);
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 1.2rem;
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
     }
     .s-sub {
-      font-size: 1.05rem;
+      font-size: 1.15rem;
       color: var(--text2);
-      max-width: 560px;
-      line-height: 1.7;
+      max-width: 620px;
+      line-height: 1.5;
     }
 
     /* ── FEATURES ── */
     .feat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-top: 3.5rem;
+      gap: 1.5rem;
+      margin-top: 3rem;
     }
     .feat-card {
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 1.75rem;
+      border-radius: 20px;
+      padding: 1.8rem;
       transition: border-color 0.3s, transform 0.3s;
     }
     .feat-card:hover { border-color: var(--red); transform: translateY(-4px); }
     .feat-icon {
-      font-size: 1.75rem;
+      font-size: 2rem;
       margin-bottom: 1rem;
       display: block;
     }
     .feat-card h3 {
-      font-family: var(--display);
-      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
+      font-size: 1.2rem;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
     }
-    .feat-card p { color: var(--text2); font-size: 0.875rem; line-height: 1.65; }
+    .feat-card p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
 
     /* ── MARQUEE ── */
-    .marquee-section { padding: 3rem 0; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
+    .marquee-section { padding: 2rem 0; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
     .marquee-track { display: flex; gap: 1rem; animation: march 25s linear infinite; width: max-content; }
     .marquee-track:hover { animation-play-state: paused; }
     .mtag {
       background: var(--bg3);
       border: 1px solid var(--border-bright);
       border-radius: 100px;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.82rem;
+      padding: 0.5rem 1.3rem;
+      font-size: 0.9rem;
+      font-weight: 500;
       color: var(--text2);
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
-    .mtag span { font-size: 1rem; }
+    .mtag span { font-size: 1.1rem; }
     @keyframes march { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
     /* ── HOW IT WORKS ── */
@@ -356,7 +361,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
-      margin-top: 3.5rem;
+      margin-top: 3rem;
       position: relative;
     }
     .steps::before {
@@ -374,19 +379,18 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
       background: var(--red-dim);
       border: 1px solid var(--red);
-      font-family: var(--display);
-      font-size: 1.3rem;
       font-weight: 800;
+      font-size: 1.4rem;
       color: var(--red);
       margin-bottom: 1.25rem;
     }
-    .step h3 { font-family: var(--display); font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.02em; }
-    .step p { color: var(--text2); font-size: 0.875rem; line-height: 1.65; }
+    .step h3 { font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .step p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
 
     /* ── PRICING ── */
     .pricing-toggle {
@@ -394,16 +398,16 @@
       justify-content: center;
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.3rem;
+      border-radius: 14px;
+      padding: 0.35rem;
       width: fit-content;
-      margin: 2.5rem auto;
+      margin: 2rem auto;
     }
     .ptoggle {
-      padding: 0.5rem 1.5rem;
-      border-radius: 9px;
+      padding: 0.6rem 1.8rem;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       cursor: pointer;
       background: transparent;
       border: none;
@@ -415,14 +419,14 @@
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      gap: 1.8rem;
       margin-top: 0;
       align-items: start;
     }
     .plan {
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 2rem;
       transition: transform 0.3s;
     }
@@ -439,32 +443,31 @@
       transform: translateX(-50%);
       background: var(--red);
       color: white;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 0.2rem 0.9rem;
+      padding: 0.25rem 1rem;
       border-radius: 100px;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       font-family: var(--mono);
     }
-    .plan-name { font-family: var(--display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .plan-name { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
     .plan-price {
-      font-family: var(--display);
-      font-size: 3rem;
       font-weight: 800;
-      letter-spacing: -0.04em;
+      font-size: 3rem;
+      letter-spacing: -0.03em;
       line-height: 1;
       margin: 1rem 0 0.25rem;
     }
-    .plan-price sup { font-size: 1.2rem; vertical-align: super; }
-    .plan-period { color: var(--text3); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    .plan-price sup { font-size: 1.3rem; vertical-align: super; }
+    .plan-period { color: var(--text3); font-size: 0.85rem; margin-bottom: 1.5rem; }
     .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
     .plan-features { list-style: none; margin-bottom: 2rem; }
     .plan-features li {
       display: flex;
       align-items: flex-start;
       gap: 0.6rem;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--text2);
       margin-bottom: 0.75rem;
       line-height: 1.5;
@@ -475,9 +478,9 @@
       width: 100%;
       text-align: center;
       padding: 0.8rem;
-      border-radius: 10px;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       text-decoration: none;
       cursor: pointer;
       border: none;
@@ -491,7 +494,7 @@
 
     /* ── CTA FINAL ── */
     .cta-section {
-      padding: 6rem 0;
+      padding: 5rem 0;
       text-align: center;
       position: relative;
       z-index: 1;
@@ -500,7 +503,7 @@
       background: var(--bg2);
       border: 1px solid var(--border-bright);
       border-radius: 32px;
-      padding: 5rem 3rem;
+      padding: 4rem 3rem;
       position: relative;
       overflow: hidden;
     }
@@ -512,13 +515,12 @@
       pointer-events: none;
     }
     .cta-box h2 {
-      font-family: var(--display);
-      font-size: clamp(2.5rem, 5vw, 4rem);
       font-weight: 800;
-      letter-spacing: -0.04em;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      letter-spacing: -0.03em;
       margin-bottom: 1rem;
     }
-    .cta-box p { color: var(--text2); font-size: 1.1rem; max-width: 480px; margin: 0 auto 2.5rem; }
+    .cta-box p { color: var(--text2); font-size: 1.1rem; max-width: 520px; margin: 0 auto 2rem; }
     .install-pill {
       display: inline-flex;
       align-items: center;
@@ -526,19 +528,19 @@
       background: var(--bg3);
       border: 1px solid var(--border-bright);
       border-radius: 100px;
-      padding: 0.65rem 1.5rem;
+      padding: 0.7rem 1.8rem;
       font-family: var(--mono);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text2);
       margin-bottom: 2rem;
     }
-    .install-pill .prompt { color: var(--red); }
+    .install-pill .prompt { color: var(--red); font-weight: 500; }
     .copy-btn {
       background: none;
       border: none;
       cursor: pointer;
       color: var(--text3);
-      font-size: 0.9rem;
+      font-size: 1rem;
       transition: color 0.2s;
       padding: 0;
     }
@@ -553,7 +555,7 @@
       z-index: 1;
     }
     .footer-inner {
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -561,10 +563,28 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-    .footer-left { color: var(--text3); font-size: 0.8rem; }
+    .footer-left {
+      color: var(--text2);
+      font-size: 0.9rem;
+    }
+    .footer-left a {
+      color: #d0d0e0;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-left a:hover {
+      color: var(--red);
+      text-decoration: underline;
+    }
     .footer-links { display: flex; gap: 2rem; }
-    .footer-links a { color: var(--text3); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--text2); }
+    .footer-links a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
 
     /* ── REVEAL ── */
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
@@ -574,10 +594,14 @@
     @media (max-width: 900px) {
       .feat-grid, .steps, .pricing-grid { grid-template-columns: 1fr; }
       .steps::before { display: none; }
-      .nav-links { display: none; }
+      .nav-links { display: none; flex-direction: column; background: var(--bg2); position: absolute; top: 100%; left: 0; width: 100%; padding: 1rem; gap: 1rem; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+      .nav-links a { width: 100%; text-align: center; padding: 0.5rem; }
       .mobile-btn { display: block; }
-      .hero { padding: 5rem 0 4rem; }
-      .cta-box { padding: 3rem 1.5rem; }
+      .hero { padding: 3rem 0 2rem; }
+      .cta-box { padding: 2.5rem 1.5rem; }
+      .editor-tabs { margin: 0.5rem auto 0; width: 100%; justify-content: center; }
+      .etab { padding: 0.4rem 1rem; font-size: 0.8rem; }
+      .pane { padding: 1.2rem; font-size: 0.75rem; }
     }
   </style>
 </head>
@@ -627,7 +651,7 @@
       </a>
     </div>
 
-    <!-- Editor -->
+    <!-- Editor (full width, not centered) -->
     <div class="editor-wrap">
       <div class="editor">
         <div class="editor-bar">
@@ -821,7 +845,7 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
 <footer>
   <div class="footer-inner">
     <div class="footer-left">
-      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank" style="color:var(--text2);text-decoration:none;">Jorge de la Flor</a>
+      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank">Jorge de la Flor</a>
     </div>
     <div class="footer-links">
       <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
@@ -867,6 +891,7 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
 
   function renderPricing(cycle) {
     const grid = document.getElementById('pricingGrid');
+    if (!grid) return;
     grid.innerHTML = plans[cycle].map(p => `
       <div class="plan ${p.featured ? 'featured' : ''}">
         ${p.featured ? '<div class="featured-badge">Most popular</div>' : ''}
@@ -895,24 +920,30 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
       document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
       document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
       tab.classList.add('on');
-      document.getElementById('p-' + tab.dataset.p).classList.add('on');
+      const target = document.getElementById('p-' + tab.dataset.p);
+      if (target) target.classList.add('on');
     });
   });
 
   // Copy
-  document.getElementById('copyBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText('pip install apider');
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = '✓';
-    setTimeout(() => btn.textContent = '📋', 2000);
-  });
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText('pip install apider');
+      copyBtn.textContent = '✓';
+      setTimeout(() => copyBtn.textContent = '📋', 2000);
+    });
+  }
 
   // Mobile menu
   const menuBtn = document.getElementById('menuBtn');
   const navLinks = document.querySelector('.nav-links');
-  menuBtn.addEventListener('click', () => {
-    navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-  });
+  if (menuBtn && navLinks) {
+    menuBtn.addEventListener('click', () => {
+      const isVisible = navLinks.style.display === 'flex';
+      navLinks.style.display = isVisible ? 'none' : 'flex';
+    });
+  }
 
   // Reveal on scroll
   const io = new IntersectionObserver(entries => {
