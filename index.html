@@ -1206,8 +1206,9 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
             price: 19,
             period: "/month",
             featured: true,
-            cta: "Start Pro",
+            cta: "Start 14-day free trial",
             ctaClass: "plan-btn-red",
+            trial: true,
             features: [
               "50,000 executions / month",
               "10 scheduled jobs",
@@ -1302,6 +1303,7 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
       <div class="plan-name">${p.name}</div>
       <div class="plan-price"><sup>$</sup>${p.price}</div>
       <div class="plan-period">${p.period}</div>
+      ${p.trial ? '<div style="color: var(--red); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">14-day free trial</div>' : ''}
       <hr class="plan-divider">
       <ul class="plan-features">${p.features.map((f) => `<li>${f}</li>`).join("")}</ul>
       <button 
