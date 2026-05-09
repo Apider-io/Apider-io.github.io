@@ -1,670 +1,941 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Apider — Python automation without infrastructure. One SDK for Email, Telegram, Discord, Slack, Sheets. Serverless, cloud-native, zero boilerplate.">
-  <title>Apider — Python automation without infrastructure</title>
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Apider — Python automation without infrastructure. One SDK for Email, Telegram, Discord, Slack, Sheets. Serverless, cloud-native, zero boilerplate."
+    />
+    <title>Apider — Python automation without infrastructure</title>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script>
+      Paddle.Environment.set("production");
+      Paddle.Initialize({ token: "live_1e2bd8f9fb0dbf64285cad95ce6" });
+    </script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    :root {
-      --red: #e8412a;
-      --red-dim: rgba(232,65,42,0.12);
-      --red-glow: rgba(232,65,42,0.25);
-      --bg: #080809;
-      --bg2: #0e0e10;
-      --bg3: #131317;
-      --border: rgba(255,255,255,0.07);
-      --border-bright: rgba(255,255,255,0.14);
-      --text: #f0f0f2;
-      --text2: #b0b0c0;
-      --text3: #7a7a8a;
-      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    }
+      :root {
+        --red: #e8412a;
+        --red-dim: rgba(232, 65, 42, 0.12);
+        --red-glow: rgba(232, 65, 42, 0.25);
+        --bg: #080809;
+        --bg2: #0e0e10;
+        --bg3: #131317;
+        --border: rgba(255, 255, 255, 0.07);
+        --border-bright: rgba(255, 255, 255, 0.14);
+        --text: #f0f0f2;
+        --text2: #b0b0c0;
+        --text3: #7a7a8a;
+        --mono: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+        --sans:
+          system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+          sans-serif;
+      }
 
-    html { scroll-behavior: smooth; }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.5;
-      overflow-x: hidden;
-    }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.5;
+        overflow-x: hidden;
+      }
 
-    /* ── NOISE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
-    }
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.4;
+      }
 
-    /* ── GLOW BG ── */
-    .bg-glow {
-      position: fixed;
-      top: -30vh;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80vw;
-      height: 60vh;
-      background: radial-gradient(ellipse, rgba(232,65,42,0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
+      /* ── GLOW BG ── */
+      .bg-glow {
+        position: fixed;
+        top: -30vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80vw;
+        height: 60vh;
+        background: radial-gradient(
+          ellipse,
+          rgba(232, 65, 42, 0.12) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(20px) saturate(1.2);
-      -webkit-backdrop-filter: blur(20px) saturate(1.2);
-      background: rgba(8,8,9,0.75);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0.9rem 2rem;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 1.35rem;
-      letter-spacing: -0.01em;
-    }
-    .logo img { width: 32px; height: 32px; border-radius: 8px; }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2.5rem;
-    }
-    .nav-links a {
-      color: var(--text2);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta {
-      background: var(--red);
-      color: white !important;
-      padding: 0.5rem 1.25rem;
-      border-radius: 8px;
-      font-weight: 600 !important;
-      font-size: 0.9rem !important;
-      transition: opacity 0.2s !important;
-    }
-    .nav-cta:hover { opacity: 0.85; }
-    .mobile-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
+      /* ── NAV ── */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px) saturate(1.2);
+        -webkit-backdrop-filter: blur(20px) saturate(1.2);
+        background: rgba(8, 8, 9, 0.75);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0.9rem 2rem;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 1.35rem;
+        letter-spacing: -0.01em;
+      }
+      .logo img {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+      }
+      .nav-links a {
+        color: var(--text2);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+      }
+      .nav-cta {
+        background: var(--red);
+        color: white !important;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        transition: opacity 0.2s !important;
+      }
+      .nav-cta:hover {
+        opacity: 0.85;
+      }
+      .mobile-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.6rem;
+        cursor: pointer;
+      }
 
-    /* ── CONTAINER ── */
-    .wrap { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+      /* ── CONTAINER ── */
+      .wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
 
-    /* ── HERO ── */
-    .hero {
-      position: relative;
-      z-index: 1;
-      padding: 5rem 0 3rem;
-      text-align: center;
-    }
-    .hero-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: var(--bg3);
-      border: 1px solid var(--border-bright);
-      border-radius: 100px;
-      padding: 0.5rem 1.25rem;
-      font-family: var(--mono);
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text2);
-      margin-bottom: 2rem;
-      animation: fadeUp 0.6s ease both;
-    }
-    .chip-dot {
-      width: 8px; height: 8px;
-      background: #2ecc71;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #2ecc71;
-      animation: blink 2s ease infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 0 3rem;
+        text-align: center;
+      }
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: var(--bg3);
+        border: 1px solid var(--border-bright);
+        border-radius: 100px;
+        padding: 0.5rem 1.25rem;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text2);
+        margin-bottom: 2rem;
+        animation: fadeUp 0.6s ease both;
+      }
+      .chip-dot {
+        width: 8px;
+        height: 8px;
+        background: #2ecc71;
+        border-radius: 50%;
+        box-shadow: 0 0 6px #2ecc71;
+        animation: blink 2s ease infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
 
-    .hero h1 {
-      font-weight: 800;
-      font-size: clamp(3rem, 8vw, 5.5rem);
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      animation: fadeUp 0.6s 0.1s ease both;
-    }
-    .hero h1 .accent { color: var(--red); }
-    .hero h1 .dim { color: var(--text3); }
+      .hero h1 {
+        font-weight: 800;
+        font-size: clamp(3rem, 8vw, 5.5rem);
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        animation: fadeUp 0.6s 0.1s ease both;
+      }
+      .hero h1 .accent {
+        color: var(--red);
+      }
+      .hero h1 .dim {
+        color: var(--text3);
+      }
 
-    .hero-sub {
-      font-size: 1.25rem;
-      color: var(--text2);
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      line-height: 1.5;
-      animation: fadeUp 0.6s 0.2s ease both;
-    }
+      .hero-sub {
+        font-size: 1.25rem;
+        color: var(--text2);
+        max-width: 680px;
+        margin: 0 auto 2rem;
+        line-height: 1.5;
+        animation: fadeUp 0.6s 0.2s ease both;
+      }
 
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 4rem;
-      animation: fadeUp 0.6s 0.3s ease both;
-    }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 4rem;
+        animation: fadeUp 0.6s 0.3s ease both;
+      }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.8rem 2rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-      font-family: var(--sans);
-    }
-    .btn-red {
-      background: var(--red);
-      color: white;
-      box-shadow: 0 0 24px var(--red-glow);
-    }
-    .btn-red:hover { transform: translateY(-2px); box-shadow: 0 4px 32px var(--red-glow); }
-    .btn-ghost {
-      background: var(--bg3);
-      border: 1px solid var(--border-bright);
-      color: var(--text2);
-    }
-    .btn-ghost:hover { border-color: var(--red); color: var(--text); }
+      /* ── BUTTONS ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        font-family: var(--sans);
+      }
+      .btn-red {
+        background: var(--red);
+        color: white;
+        box-shadow: 0 0 24px var(--red-glow);
+      }
+      .btn-red:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 32px var(--red-glow);
+      }
+      .btn-ghost {
+        background: var(--bg3);
+        border: 1px solid var(--border-bright);
+        color: var(--text2);
+      }
+      .btn-ghost:hover {
+        border-color: var(--red);
+        color: var(--text);
+      }
 
-    /* ── CODE EDITOR (WIDE, NOT CENTERED) ── */
-    .editor-wrap {
-      width: 100%;
-      text-align: left;
-    }
-    .editor {
-      background: var(--bg2);
-      border: 1px solid var(--border-bright);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
-    }
-    .editor-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.85rem 1.25rem;
-      background: var(--bg3);
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
-    .dot-r { background: #ff5f57; }
-    .dot-y { background: #febc2e; }
-    .dot-g { background: #28c840; }
-    .editor-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-left: auto;
-    }
-    .etab {
-      font-family: var(--mono);
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding: 0.6rem 1.3rem;
-      border-radius: 40px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--text2);
-      transition: all 0.2s;
-    }
-    .etab:hover {
-      background: rgba(232,65,42,0.2);
-      border-color: var(--red);
-      color: var(--text);
-    }
-    .etab.on {
-      background: var(--red);
-      color: white;
-      border-color: var(--red);
-      box-shadow: 0 0 8px var(--red-glow);
-    }
-    .pane {
-      display: none;
-      padding: 2rem;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      line-height: 1.7;
-      background: #0a0a0e;
-      overflow-x: auto;
-    }
-    .pane.on { display: block; }
-    .pane pre { margin: 0; white-space: pre-wrap; font-family: inherit; }
-    .kw { color: #c792ea; font-weight: 500; }
-    .fn { color: #82aaff; }
-    .st { color: #c3e88d; }
-    .nm { color: #f78c6c; }
-    .cm { color: var(--text3); font-style: italic; }
-    .op { color: var(--text2); }
+      /* ── CODE EDITOR (WIDE, NOT CENTERED) ── */
+      .editor-wrap {
+        width: 100%;
+        text-align: left;
+      }
+      .editor {
+        background: var(--bg2);
+        border: 1px solid var(--border-bright);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow:
+          0 32px 64px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.04);
+      }
+      .editor-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.25rem;
+        background: var(--bg3);
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f57;
+      }
+      .dot-y {
+        background: #febc2e;
+      }
+      .dot-g {
+        background: #28c840;
+      }
+      .editor-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: auto;
+      }
+      .etab {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.6rem 1.3rem;
+        border-radius: 40px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: var(--text2);
+        transition: all 0.2s;
+      }
+      .etab:hover {
+        background: rgba(232, 65, 42, 0.2);
+        border-color: var(--red);
+        color: var(--text);
+      }
+      .etab.on {
+        background: var(--red);
+        color: white;
+        border-color: var(--red);
+        box-shadow: 0 0 8px var(--red-glow);
+      }
+      .pane {
+        display: none;
+        padding: 2rem;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        line-height: 1.7;
+        background: #0a0a0e;
+        overflow-x: auto;
+      }
+      .pane.on {
+        display: block;
+      }
+      .pane pre {
+        margin: 0;
+        white-space: pre-wrap;
+        font-family: inherit;
+      }
+      .kw {
+        color: #c792ea;
+        font-weight: 500;
+      }
+      .fn {
+        color: #82aaff;
+      }
+      .st {
+        color: #c3e88d;
+      }
+      .nm {
+        color: #f78c6c;
+      }
+      .cm {
+        color: var(--text3);
+        font-style: italic;
+      }
+      .op {
+        color: var(--text2);
+      }
 
-    /* ── DIVIDER ── */
-    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+      /* ── DIVIDER ── */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
 
-    /* ── SECTION ── */
-    section { position: relative; z-index: 1; padding: 5rem 0; }
-    .s-label {
-      display: inline-block;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--red);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    .s-title {
-      font-weight: 800;
-      font-size: clamp(2rem, 4.5vw, 3.4rem);
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 1rem;
-    }
-    .s-sub {
-      font-size: 1.15rem;
-      color: var(--text2);
-      max-width: 620px;
-      line-height: 1.5;
-    }
+      /* ── SECTION ── */
+      section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 0;
+      }
+      .s-label {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--red);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+      .s-title {
+        font-weight: 800;
+        font-size: clamp(2rem, 4.5vw, 3.4rem);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+      }
+      .s-sub {
+        font-size: 1.15rem;
+        color: var(--text2);
+        max-width: 620px;
+        line-height: 1.5;
+      }
 
-    /* ── FEATURES ── */
-    .feat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .feat-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.8rem;
-      transition: border-color 0.3s, transform 0.3s;
-    }
-    .feat-card:hover { border-color: var(--red); transform: translateY(-4px); }
-    .feat-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .feat-card h3 {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 0.6rem;
-      letter-spacing: -0.01em;
-    }
-    .feat-card p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
+      /* ── FEATURES ── */
+      .feat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+      .feat-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 1.8rem;
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+      }
+      .feat-card:hover {
+        border-color: var(--red);
+        transform: translateY(-4px);
+      }
+      .feat-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .feat-card h3 {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0.6rem;
+        letter-spacing: -0.01em;
+      }
+      .feat-card p {
+        color: var(--text2);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
 
-    /* ── MARQUEE ── */
-    .marquee-section { padding: 2rem 0; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
-    .marquee-track { display: flex; gap: 1rem; animation: march 25s linear infinite; width: max-content; }
-    .marquee-track:hover { animation-play-state: paused; }
-    .mtag {
-      background: var(--bg3);
-      border: 1px solid var(--border-bright);
-      border-radius: 100px;
-      padding: 0.5rem 1.3rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text2);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .mtag span { font-size: 1.1rem; }
-    @keyframes march { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      /* ── MARQUEE ── */
+      .marquee-section {
+        padding: 2rem 0;
+        overflow: hidden;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+      }
+      .marquee-track {
+        display: flex;
+        gap: 1rem;
+        animation: march 25s linear infinite;
+        width: max-content;
+      }
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+      .mtag {
+        background: var(--bg3);
+        border: 1px solid var(--border-bright);
+        border-radius: 100px;
+        padding: 0.5rem 1.3rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text2);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .mtag span {
+        font-size: 1.1rem;
+      }
+      @keyframes march {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
 
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-      margin-top: 3rem;
-      position: relative;
-    }
-    .steps::before {
-      content: '';
-      position: absolute;
-      top: 2.5rem;
-      left: calc(33.33% + 1rem);
-      right: calc(33.33% + 1rem);
-      height: 1px;
-      background: linear-gradient(90deg, var(--red), transparent);
-      opacity: 0.4;
-    }
-    .step { text-align: center; padding: 2rem 1.5rem; }
-    .step-num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-      background: var(--red-dim);
-      border: 1px solid var(--red);
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--red);
-      margin-bottom: 1.25rem;
-    }
-    .step h3 { font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; }
-    .step p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
+      /* ── HOW IT WORKS ── */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+        position: relative;
+      }
+      .steps::before {
+        content: "";
+        position: absolute;
+        top: 2.5rem;
+        left: calc(33.33% + 1rem);
+        right: calc(33.33% + 1rem);
+        height: 1px;
+        background: linear-gradient(90deg, var(--red), transparent);
+        opacity: 0.4;
+      }
+      .step {
+        text-align: center;
+        padding: 2rem 1.5rem;
+      }
+      .step-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        background: var(--red-dim);
+        border: 1px solid var(--red);
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--red);
+        margin-bottom: 1.25rem;
+      }
+      .step h3 {
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .step p {
+        color: var(--text2);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
 
-    /* ── PRICING ── */
-    .pricing-toggle {
-      display: flex;
-      justify-content: center;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.35rem;
-      width: fit-content;
-      margin: 2rem auto;
-    }
-    .ptoggle {
-      padding: 0.6rem 1.8rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text2);
-      font-family: var(--sans);
-      transition: all 0.2s;
-    }
-    .ptoggle.on { background: var(--red); color: white; }
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.8rem;
-      margin-top: 0;
-      align-items: start;
-    }
-    .plan {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 2rem;
-      transition: transform 0.3s;
-    }
-    .plan:hover { transform: translateY(-4px); }
-    .plan.featured {
-      border-color: var(--red);
-      background: linear-gradient(160deg, rgba(232,65,42,0.06), var(--bg2));
-      position: relative;
-    }
-    .featured-badge {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--red);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.25rem 1rem;
-      border-radius: 100px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      font-family: var(--mono);
-    }
-    .plan-name { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
-    .plan-price {
-      font-weight: 800;
-      font-size: 3rem;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin: 1rem 0 0.25rem;
-    }
-    .plan-price sup { font-size: 1.3rem; vertical-align: super; }
-    .plan-period { color: var(--text3); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-    .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-      font-size: 0.9rem;
-      color: var(--text2);
-      margin-bottom: 0.75rem;
-      line-height: 1.5;
-    }
-    .plan-features li::before { content: "✓"; color: var(--red); font-weight: 700; flex-shrink: 0; }
-    .plan-btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 0.8rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      font-family: var(--sans);
-      transition: all 0.2s;
-    }
-    .plan-btn-red { background: var(--red); color: white; }
-    .plan-btn-red:hover { opacity: 0.85; }
-    .plan-btn-ghost { background: var(--bg3); border: 1px solid var(--border-bright); color: var(--text2); }
-    .plan-btn-ghost:hover { border-color: var(--red); color: var(--text); }
+      /* ── PRICING ── */
+      .pricing-toggle {
+        display: flex;
+        justify-content: center;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 0.35rem;
+        width: fit-content;
+        margin: 2rem auto;
+      }
+      .ptoggle {
+        padding: 0.6rem 1.8rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text2);
+        font-family: var(--sans);
+        transition: all 0.2s;
+      }
+      .ptoggle.on {
+        background: var(--red);
+        color: white;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.8rem;
+        margin-top: 0;
+        align-items: start;
+      }
+      .plan {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2rem;
+        transition: transform 0.3s;
+      }
+      .plan:hover {
+        transform: translateY(-4px);
+      }
+      .plan.featured {
+        border-color: var(--red);
+        background: linear-gradient(
+          160deg,
+          rgba(232, 65, 42, 0.06),
+          var(--bg2)
+        );
+        position: relative;
+      }
+      .featured-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--red);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 1rem;
+        border-radius: 100px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-family: var(--mono);
+      }
+      .plan-name {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+      .plan-price {
+        font-weight: 800;
+        font-size: 3rem;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin: 1rem 0 0.25rem;
+      }
+      .plan-price sup {
+        font-size: 1.3rem;
+        vertical-align: super;
+      }
+      .plan-period {
+        color: var(--text3);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      .plan-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 1.5rem 0;
+      }
+      .plan-features {
+        list-style: none;
+        margin-bottom: 2rem;
+      }
+      .plan-features li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: var(--text2);
+        margin-bottom: 0.75rem;
+        line-height: 1.5;
+      }
+      .plan-features li::before {
+        content: "✓";
+        color: var(--red);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .plan-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        font-family: var(--sans);
+        transition: all 0.2s;
+      }
+      .plan-btn-red {
+        background: var(--red);
+        color: white;
+      }
+      .plan-btn-red:hover {
+        opacity: 0.85;
+      }
+      .plan-btn-ghost {
+        background: var(--bg3);
+        border: 1px solid var(--border-bright);
+        color: var(--text2);
+      }
+      .plan-btn-ghost:hover {
+        border-color: var(--red);
+        color: var(--text);
+      }
 
-    /* ── CTA FINAL ── */
-    .cta-section {
-      padding: 5rem 0;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-    .cta-box {
-      background: var(--bg2);
-      border: 1px solid var(--border-bright);
-      border-radius: 32px;
-      padding: 4rem 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-box::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(232,65,42,0.1) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .cta-box h2 {
-      font-weight: 800;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
-    }
-    .cta-box p { color: var(--text2); font-size: 1.1rem; max-width: 520px; margin: 0 auto 2rem; }
-    .install-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 1rem;
-      background: var(--bg3);
-      border: 1px solid var(--border-bright);
-      border-radius: 100px;
-      padding: 0.7rem 1.8rem;
-      font-family: var(--mono);
-      font-size: 0.9rem;
-      color: var(--text2);
-      margin-bottom: 2rem;
-    }
-    .install-pill .prompt { color: var(--red); font-weight: 500; }
-    .copy-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      font-size: 1rem;
-      transition: color 0.2s;
-      padding: 0;
-    }
-    .copy-btn:hover { color: var(--text); }
-    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+      /* ── CTA FINAL ── */
+      .cta-section {
+        padding: 5rem 0;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+      .cta-box {
+        background: var(--bg2);
+        border: 1px solid var(--border-bright);
+        border-radius: 32px;
+        padding: 4rem 3rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-box::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 50% 0%,
+          rgba(232, 65, 42, 0.1) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+      }
+      .cta-box h2 {
+        font-weight: 800;
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        letter-spacing: -0.03em;
+        margin-bottom: 1rem;
+      }
+      .cta-box p {
+        color: var(--text2);
+        font-size: 1.1rem;
+        max-width: 520px;
+        margin: 0 auto 2rem;
+      }
+      .install-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--bg3);
+        border: 1px solid var(--border-bright);
+        border-radius: 100px;
+        padding: 0.7rem 1.8rem;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        color: var(--text2);
+        margin-bottom: 2rem;
+      }
+      .install-pill .prompt {
+        color: var(--red);
+        font-weight: 500;
+      }
+      .copy-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        font-size: 1rem;
+        transition: color 0.2s;
+        padding: 0;
+      }
+      .copy-btn:hover {
+        color: var(--text);
+      }
+      .cta-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2.5rem 2rem;
-      position: relative;
-      z-index: 1;
-    }
-    .footer-inner {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-left {
-      color: var(--text2);
-      font-size: 0.9rem;
-    }
-    .footer-left a {
-      color: #d0d0e0;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .footer-left a:hover {
-      color: var(--red);
-      text-decoration: underline;
-    }
-    .footer-links { display: flex; gap: 2rem; }
-    .footer-links a {
-      color: var(--text2);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
-    .footer-links a:hover { color: var(--text); }
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2.5rem 2rem;
+        position: relative;
+        z-index: 1;
+      }
+      .footer-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .footer-left {
+        color: var(--text2);
+        font-size: 0.9rem;
+      }
+      .footer-left a {
+        color: #d0d0e0;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      .footer-left a:hover {
+        color: var(--red);
+        text-decoration: underline;
+      }
+      .footer-links {
+        display: flex;
+        gap: 2rem;
+      }
+      .footer-links a {
+        color: var(--text2);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--text);
+      }
 
-    /* ── REVEAL ── */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
-    .reveal.in { opacity: 1; transform: translateY(0); }
+      /* ── REVEAL ── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+          opacity 0.65s ease,
+          transform 0.65s ease;
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-    /* ── MOBILE ── */
-    @media (max-width: 900px) {
-      .feat-grid, .steps, .pricing-grid { grid-template-columns: 1fr; }
-      .steps::before { display: none; }
-      .nav-links { display: none; flex-direction: column; background: var(--bg2); position: absolute; top: 100%; left: 0; width: 100%; padding: 1rem; gap: 1rem; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
-      .nav-links a { width: 100%; text-align: center; padding: 0.5rem; }
-      .mobile-btn { display: block; }
-      .hero { padding: 3rem 0 2rem; }
-      .cta-box { padding: 2.5rem 1.5rem; }
-      .editor-tabs { margin: 0.5rem auto 0; width: 100%; justify-content: center; }
-      .etab { padding: 0.4rem 1rem; font-size: 0.8rem; }
-      .pane { padding: 1.2rem; font-size: 0.75rem; }
-    }
-  </style>
-</head>
-<body>
+      /* ── MOBILE ── */
+      @media (max-width: 900px) {
+        .feat-grid,
+        .steps,
+        .pricing-grid {
+          grid-template-columns: 1fr;
+        }
+        .steps::before {
+          display: none;
+        }
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          background: var(--bg2);
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          padding: 1rem;
+          gap: 1rem;
+          border-bottom: 1px solid var(--border);
+          backdrop-filter: blur(12px);
+        }
+        .nav-links a {
+          width: 100%;
+          text-align: center;
+          padding: 0.5rem;
+        }
+        .mobile-btn {
+          display: block;
+        }
+        .hero {
+          padding: 3rem 0 2rem;
+        }
+        .cta-box {
+          padding: 2.5rem 1.5rem;
+        }
+        .editor-tabs {
+          margin: 0.5rem auto 0;
+          width: 100%;
+          justify-content: center;
+        }
+        .etab {
+          padding: 0.4rem 1rem;
+          font-size: 0.8rem;
+        }
+        .pane {
+          padding: 1.2rem;
+          font-size: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-glow"></div>
 
-<div class="bg-glow"></div>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="logo">
-      <img src="apider_logo.png" alt="Apider logo">
-      Apider
-    </a>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
-      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
-      <a href="#pricing" class="nav-cta">Get started</a>
-    </div>
-    <button class="mobile-btn" id="menuBtn">☰</button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<div class="wrap">
-  <div class="hero">
-    <div class="hero-chip">
-      <span class="chip-dot"></span>
-      v0.1.2 · Live on PyPI
-    </div>
-    <h1>
-      Automate Python.<br>
-      <span class="accent">Without</span> <span class="dim">the mess.</span>
-    </h1>
-    <p class="hero-sub">
-      One SDK for Email, Telegram, Discord, Slack, and Google Sheets.
-      Write automation logic in Python — we run it in the cloud.
-    </p>
-    <div class="hero-actions">
-      <a href="#pricing" class="btn btn-red">Start for free →</a>
-      <a href="https://github.com/Apider-io" target="_blank" class="btn btn-ghost">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-        GitHub
-      </a>
-    </div>
-
-    <!-- Editor (full width, not centered) -->
-    <div class="editor-wrap">
-      <div class="editor">
-        <div class="editor-bar">
-          <span class="dot dot-r"></span>
-          <span class="dot dot-y"></span>
-          <span class="dot dot-g"></span>
-          <div class="editor-tabs">
-            <button class="etab on" data-p="monitor">monitor.py</button>
-            <button class="etab" data-p="email">email.py</button>
-            <button class="etab" data-p="sheets">sheets.py</button>
-          </div>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-inner">
+        <a href="#" class="logo">
+          <img src="apider_logo.png" alt="Apider logo" />
+          Apider
+        </a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#how">How it works</a>
+          <a href="#pricing">Pricing</a>
+          <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+          <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+          <a href="#pricing" class="nav-cta">Get started</a>
         </div>
-        <div id="p-monitor" class="pane on"><pre><span class="kw">from</span> apider <span class="kw">import</span> Email, Telegram, CloudScheduler
+        <button class="mobile-btn" id="menuBtn">☰</button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="wrap">
+      <div class="hero">
+        <div class="hero-chip">
+          <span class="chip-dot"></span>
+          v0.1.2 · Live on PyPI
+        </div>
+        <h1>
+          Automate Python.<br />
+          <span class="accent">Without</span> <span class="dim">the mess.</span>
+        </h1>
+        <p class="hero-sub">
+          One SDK for Email, Telegram, Discord, Slack, and Google Sheets. Write
+          automation logic in Python — we run it in the cloud.
+        </p>
+        <div class="hero-actions">
+          <a href="#pricing" class="btn btn-red">Start for free →</a>
+          <a
+            href="https://github.com/Apider-io"
+            target="_blank"
+            class="btn btn-ghost"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+            GitHub
+          </a>
+        </div>
+
+        <!-- Editor (full width, not centered) -->
+        <div class="editor-wrap">
+          <div class="editor">
+            <div class="editor-bar">
+              <span class="dot dot-r"></span>
+              <span class="dot dot-y"></span>
+              <span class="dot dot-g"></span>
+              <div class="editor-tabs">
+                <button class="etab on" data-p="monitor">monitor.py</button>
+                <button class="etab" data-p="email">email.py</button>
+                <button class="etab" data-p="sheets">sheets.py</button>
+              </div>
+            </div>
+            <div id="p-monitor" class="pane on">
+              <pre><span class="kw">from</span> apider <span class="kw">import</span> Email, Telegram, CloudScheduler
 
 <span class="kw">def</span> <span class="fn">monitor_inbox</span>():
     emails <span class="op">=</span> Email.<span class="fn">read</span>(unread_only<span class="op">=</span><span class="kw">True</span>)
@@ -673,8 +944,10 @@
         Telegram.<span class="fn">send</span>(<span class="st">f"📬 {len(emails)} new emails:\n{summary}"</span>)
 
 <span class="cm"># Runs every 10 minutes — in the cloud, forever</span>
-CloudScheduler.<span class="fn">every_minutes</span>(<span class="nm">10</span>, monitor_inbox)</pre></div>
-        <div id="p-email" class="pane"><pre><span class="kw">from</span> apider <span class="kw">import</span> Email
+CloudScheduler.<span class="fn">every_minutes</span>(<span class="nm">10</span>, monitor_inbox)</pre>
+            </div>
+            <div id="p-email" class="pane">
+              <pre><span class="kw">from</span> apider <span class="kw">import</span> Email
 
 <span class="cm"># Send</span>
 Email.<span class="fn">send</span>(
@@ -687,8 +960,10 @@ Email.<span class="fn">send</span>(
 <span class="cm"># Read</span>
 emails <span class="op">=</span> Email.<span class="fn">read</span>(unread_only<span class="op">=</span><span class="kw">True</span>, mark_as_read<span class="op">=</span><span class="kw">True</span>)
 <span class="kw">for</span> e <span class="kw">in</span> emails:
-    <span class="fn">print</span>(e.subject, e.email_sender)</pre></div>
-        <div id="p-sheets" class="pane"><pre><span class="kw">from</span> apider <span class="kw">import</span> Sheets
+    <span class="fn">print</span>(e.subject, e.email_sender)</pre>
+            </div>
+            <div id="p-sheets" class="pane">
+              <pre><span class="kw">from</span> apider <span class="kw">import</span> Sheets
 
 <span class="cm"># Read as Polars DataFrame with type inference</span>
 df <span class="op">=</span> Sheets.<span class="fn">read</span>(filters<span class="op">=</span>{<span class="st">"status"</span>: <span class="st">"pending"</span>})
@@ -697,259 +972,431 @@ df <span class="op">=</span> Sheets.<span class="fn">read</span>(filters<span cl
 Sheets.<span class="fn">append</span>([<span class="st">"2026-04-23"</span>, <span class="st">"Jorge"</span>, <span class="nm">1499</span>])
 
 <span class="cm"># Upsert by column match</span>
-Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span class="st">"user@co.com"</span>, [<span class="st">"user@co.com"</span>, <span class="st">"Pro"</span>])</pre></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MARQUEE -->
-<div class="marquee-section">
-  <div class="marquee-track" id="marquee">
-    <div class="mtag"><span>📧</span> Gmail</div>
-    <div class="mtag"><span>📧</span> Outlook</div>
-    <div class="mtag"><span>✈️</span> Telegram</div>
-    <div class="mtag"><span>💬</span> Discord</div>
-    <div class="mtag"><span>💼</span> Slack</div>
-    <div class="mtag"><span>📊</span> Google Sheets</div>
-    <div class="mtag"><span>⏰</span> CloudScheduler</div>
-    <div class="mtag"><span>🔐</span> Zero secret storage</div>
-    <div class="mtag"><span>☁️</span> Azure Functions</div>
-    <div class="mtag"><span>🐍</span> Pure Python</div>
-    <div class="mtag"><span>📧</span> Gmail</div>
-    <div class="mtag"><span>📧</span> Outlook</div>
-    <div class="mtag"><span>✈️</span> Telegram</div>
-    <div class="mtag"><span>💬</span> Discord</div>
-    <div class="mtag"><span>💼</span> Slack</div>
-    <div class="mtag"><span>📊</span> Google Sheets</div>
-    <div class="mtag"><span>⏰</span> CloudScheduler</div>
-    <div class="mtag"><span>🔐</span> Zero secret storage</div>
-    <div class="mtag"><span>☁️</span> Azure Functions</div>
-    <div class="mtag"><span>🐍</span> Pure Python</div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section id="features">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="s-label">Why Apider</div>
-      <h2 class="s-title">Built for Python developers<br>who hate boilerplate</h2>
-      <p class="s-sub">Stop writing 100 lines to send an email. Stop wrestling with OAuth. Just import and run.</p>
-    </div>
-    <div class="feat-grid reveal">
-      <div class="feat-card">
-        <span class="feat-icon">⚡</span>
-        <h3>One-liner integrations</h3>
-        <p>Email.send() · Telegram.send() · Sheets.append(). No setup wizards, no OAuth flows, no SDK configuration.</p>
-      </div>
-      <div class="feat-card">
-        <span class="feat-icon">☁️</span>
-        <h3>Serverless by default</h3>
-        <p>Your scripts run on Azure Functions. No servers to provision, no containers to manage, no Dockerfile.</p>
-      </div>
-      <div class="feat-card">
-        <span class="feat-icon">⏰</span>
-        <h3>Cron as Python</h3>
-        <p>CloudScheduler.every_minutes(10, fn) registers a persistent job in the cloud. No crontab, no Celery.</p>
-      </div>
-      <div class="feat-card">
-        <span class="feat-icon">🔐</span>
-        <h3>Zero secret storage</h3>
-        <p>Your API keys stay in .env on your machine. We never store them — they travel encrypted per-request.</p>
-      </div>
-      <div class="feat-card">
-        <span class="feat-icon">📊</span>
-        <h3>Typed Sheets data</h3>
-        <p>Sheets.read() returns a Polars DataFrame with auto-detected types — integers, floats, strings. No more raw text.</p>
-      </div>
-      <div class="feat-card">
-        <span class="feat-icon">🔀</span>
-        <h3>Multi-channel by nature</h3>
-        <p>Mix Email + Telegram + Discord + Slack in the same script. One execution, multiple outputs.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- HOW IT WORKS -->
-<section id="how">
-  <div class="wrap">
-    <div class="reveal" style="text-align: center;">
-      <div class="s-label">How it works</div>
-      <h2 class="s-title">Write Python. We handle the rest.</h2>
-      <p class="s-sub" style="margin: 0 auto;">No infrastructure knowledge required. If you can write a function, you can automate anything.</p>
-    </div>
-    <div class="steps reveal">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Install &amp; configure</h3>
-        <p>pip install apider. Add your API keys to .env. That's it — your credentials never leave your machine.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Write your script</h3>
-        <p>Use Email, Telegram, Sheets, Discord, Slack — all as simple Python functions. No boilerplate, no classes to extend.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Schedule &amp; forget</h3>
-        <p>CloudScheduler.every_minutes(10, fn) deploys your script to Azure. It runs forever, even when your laptop is off.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- PRICING -->
-<section id="pricing">
-  <div class="wrap">
-    <div class="reveal" style="text-align: center;">
-      <div class="s-label">Pricing</div>
-      <h2 class="s-title">Simple, transparent pricing</h2>
-      <p class="s-sub" style="margin: 0 auto;">Pay only for what you use. No hidden fees, no credit card required to start.</p>
-    </div>
-    <div class="pricing-toggle reveal">
-      <button class="ptoggle on" data-c="monthly">Monthly</button>
-      <button class="ptoggle" data-c="yearly">Yearly · Save 20%</button>
-    </div>
-    <div class="pricing-grid reveal" id="pricingGrid"></div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <div class="wrap">
-    <div class="cta-box reveal">
-      <h2>Start automating today</h2>
-      <p>Install Apider, write your first script, and run it in the cloud — in under 5 minutes.</p>
-      <div>
-        <div class="install-pill">
-          <span class="prompt">$</span>
-          <span>pip install apider</span>
-          <button class="copy-btn" id="copyBtn" title="Copy">📋</button>
+Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span class="st">"user@co.com"</span>, [<span class="st">"user@co.com"</span>, <span class="st">"Pro"</span>])</pre>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="cta-actions">
-        <a href="#pricing" class="btn btn-red">Get started free →</a>
-        <a href="https://apider-io.github.io/docs" target="_blank" class="btn btn-ghost">Read the docs</a>
+    </div>
+
+    <!-- MARQUEE -->
+    <div class="marquee-section">
+      <div class="marquee-track" id="marquee">
+        <div class="mtag"><span>📧</span> Gmail</div>
+        <div class="mtag"><span>📧</span> Outlook</div>
+        <div class="mtag"><span>✈️</span> Telegram</div>
+        <div class="mtag"><span>💬</span> Discord</div>
+        <div class="mtag"><span>💼</span> Slack</div>
+        <div class="mtag"><span>📊</span> Google Sheets</div>
+        <div class="mtag"><span>⏰</span> CloudScheduler</div>
+        <div class="mtag"><span>🔐</span> Zero secret storage</div>
+        <div class="mtag"><span>☁️</span> Azure Functions</div>
+        <div class="mtag"><span>🐍</span> Pure Python</div>
+        <div class="mtag"><span>📧</span> Gmail</div>
+        <div class="mtag"><span>📧</span> Outlook</div>
+        <div class="mtag"><span>✈️</span> Telegram</div>
+        <div class="mtag"><span>💬</span> Discord</div>
+        <div class="mtag"><span>💼</span> Slack</div>
+        <div class="mtag"><span>📊</span> Google Sheets</div>
+        <div class="mtag"><span>⏰</span> CloudScheduler</div>
+        <div class="mtag"><span>🔐</span> Zero secret storage</div>
+        <div class="mtag"><span>☁️</span> Azure Functions</div>
+        <div class="mtag"><span>🐍</span> Pure Python</div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-left">
-      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank">Jorge de la Flor</a>
-    </div>
-    <div class="footer-links">
-      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
-      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
-      <a href="https://github.com/Apider-io/apider/releases" target="_blank">Changelog</a>
-      <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Pricing data
-  const plans = {
-    monthly: [
-      {
-        name: 'Free', price: 0, period: '/month', featured: false, cta: 'Start free', ctaClass: 'plan-btn-ghost',
-        features: ['2,000 executions / month', '1 scheduled job', 'All modules included', 'Community support']
-      },
-      {
-        name: 'Pro', price: 19, period: '/month', featured: true, cta: 'Start Pro', ctaClass: 'plan-btn-red',
-        features: ['50,000 executions / month', '10 scheduled jobs', 'Priority execution', 'Email support', 'Early access to new modules']
-      },
-      {
-        name: 'Business', price: 49, period: '/month', featured: false, cta: 'Contact sales', ctaClass: 'plan-btn-ghost',
-        features: ['500,000 executions / month', 'Unlimited scheduled jobs', 'Dedicated SLAs', 'Priority support', 'Custom integrations']
-      }
-    ],
-    yearly: [
-      {
-        name: 'Free', price: 0, period: '/year', featured: false, cta: 'Start free', ctaClass: 'plan-btn-ghost',
-        features: ['2,000 executions / month', '1 scheduled job', 'All modules included', 'Community support']
-      },
-      {
-        name: 'Pro', price: 182, period: '/year', featured: true, cta: 'Start Pro yearly', ctaClass: 'plan-btn-red',
-        features: ['50,000 executions / month', '10 scheduled jobs', 'Priority execution', 'Email support', 'Early access to new modules']
-      },
-      {
-        name: 'Business', price: 470, period: '/year', featured: false, cta: 'Contact sales', ctaClass: 'plan-btn-ghost',
-        features: ['500,000 executions / month', 'Unlimited scheduled jobs', 'Dedicated SLAs', 'Priority support', 'Custom integrations']
-      }
-    ]
-  };
-
-  function renderPricing(cycle) {
-    const grid = document.getElementById('pricingGrid');
-    if (!grid) return;
-    grid.innerHTML = plans[cycle].map(p => `
-      <div class="plan ${p.featured ? 'featured' : ''}">
-        ${p.featured ? '<div class="featured-badge">Most popular</div>' : ''}
-        <div class="plan-name">${p.name}</div>
-        <div class="plan-price"><sup>$</sup>${p.price}</div>
-        <div class="plan-period">${p.period}</div>
-        <hr class="plan-divider">
-        <ul class="plan-features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-        <button class="plan-btn ${p.ctaClass}">${p.cta}</button>
+    <!-- FEATURES -->
+    <section id="features">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="s-label">Why Apider</div>
+          <h2 class="s-title">
+            Built for Python developers<br />who hate boilerplate
+          </h2>
+          <p class="s-sub">
+            Stop writing 100 lines to send an email. Stop wrestling with OAuth.
+            Just import and run.
+          </p>
+        </div>
+        <div class="feat-grid reveal">
+          <div class="feat-card">
+            <span class="feat-icon">⚡</span>
+            <h3>One-liner integrations</h3>
+            <p>
+              Email.send() · Telegram.send() · Sheets.append(). No setup
+              wizards, no OAuth flows, no SDK configuration.
+            </p>
+          </div>
+          <div class="feat-card">
+            <span class="feat-icon">☁️</span>
+            <h3>Serverless by default</h3>
+            <p>
+              Your scripts run on Azure Functions. No servers to provision, no
+              containers to manage, no Dockerfile.
+            </p>
+          </div>
+          <div class="feat-card">
+            <span class="feat-icon">⏰</span>
+            <h3>Cron as Python</h3>
+            <p>
+              CloudScheduler.every_minutes(10, fn) registers a persistent job in
+              the cloud. No crontab, no Celery.
+            </p>
+          </div>
+          <div class="feat-card">
+            <span class="feat-icon">🔐</span>
+            <h3>Zero secret storage</h3>
+            <p>
+              Your API keys stay in .env on your machine. We never store them —
+              they travel encrypted per-request.
+            </p>
+          </div>
+          <div class="feat-card">
+            <span class="feat-icon">📊</span>
+            <h3>Typed Sheets data</h3>
+            <p>
+              Sheets.read() returns a Polars DataFrame with auto-detected types
+              — integers, floats, strings. No more raw text.
+            </p>
+          </div>
+          <div class="feat-card">
+            <span class="feat-icon">🔀</span>
+            <h3>Multi-channel by nature</h3>
+            <p>
+              Mix Email + Telegram + Discord + Slack in the same script. One
+              execution, multiple outputs.
+            </p>
+          </div>
+        </div>
       </div>
-    `).join('');
-  }
-  renderPricing('monthly');
+    </section>
 
-  document.querySelectorAll('.ptoggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.ptoggle').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      renderPricing(btn.dataset.c);
-    });
-  });
+    <hr class="divider" />
 
-  // Editor tabs
-  document.querySelectorAll('.etab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
-      document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
-      tab.classList.add('on');
-      const target = document.getElementById('p-' + tab.dataset.p);
-      if (target) target.classList.add('on');
-    });
-  });
+    <!-- HOW IT WORKS -->
+    <section id="how">
+      <div class="wrap">
+        <div class="reveal" style="text-align: center">
+          <div class="s-label">How it works</div>
+          <h2 class="s-title">Write Python. We handle the rest.</h2>
+          <p class="s-sub" style="margin: 0 auto">
+            No infrastructure knowledge required. If you can write a function,
+            you can automate anything.
+          </p>
+        </div>
+        <div class="steps reveal">
+          <div class="step">
+            <div class="step-num">1</div>
+            <h3>Install &amp; configure</h3>
+            <p>
+              pip install apider. Add your API keys to .env. That's it — your
+              credentials never leave your machine.
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <h3>Write your script</h3>
+            <p>
+              Use Email, Telegram, Sheets, Discord, Slack — all as simple Python
+              functions. No boilerplate, no classes to extend.
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <h3>Schedule &amp; forget</h3>
+            <p>
+              CloudScheduler.every_minutes(10, fn) deploys your script to Azure.
+              It runs forever, even when your laptop is off.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  // Copy
-  const copyBtn = document.getElementById('copyBtn');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText('pip install apider');
-      copyBtn.textContent = '✓';
-      setTimeout(() => copyBtn.textContent = '📋', 2000);
-    });
-  }
+    <hr class="divider" />
 
-  // Mobile menu
-  const menuBtn = document.getElementById('menuBtn');
-  const navLinks = document.querySelector('.nav-links');
-  if (menuBtn && navLinks) {
-    menuBtn.addEventListener('click', () => {
-      const isVisible = navLinks.style.display === 'flex';
-      navLinks.style.display = isVisible ? 'none' : 'flex';
-    });
-  }
+    <!-- PRICING -->
+    <section id="pricing">
+      <div class="wrap">
+        <div class="reveal" style="text-align: center">
+          <div class="s-label">Pricing</div>
+          <h2 class="s-title">Simple, transparent pricing</h2>
+          <p class="s-sub" style="margin: 0 auto">
+            Pay only for what you use. No hidden fees, no credit card required
+            to start.
+          </p>
+        </div>
+        <div class="pricing-toggle reveal">
+          <button class="ptoggle on" data-c="monthly">Monthly</button>
+          <button class="ptoggle" data-c="yearly">Yearly · Save 20%</button>
+        </div>
+        <div class="pricing-grid reveal" id="pricingGrid"></div>
+      </div>
+    </section>
 
-  // Reveal on scroll
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
-</body>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="wrap">
+        <div class="cta-box reveal">
+          <h2>Start automating today</h2>
+          <p>
+            Install Apider, write your first script, and run it in the cloud —
+            in under 5 minutes.
+          </p>
+          <div>
+            <div class="install-pill">
+              <span class="prompt">$</span>
+              <span>pip install apider</span>
+              <button class="copy-btn" id="copyBtn" title="Copy">📋</button>
+            </div>
+          </div>
+          <div class="cta-actions">
+            <a href="#pricing" class="btn btn-red">Get started free →</a>
+            <a
+              href="https://apider-io.github.io/docs"
+              target="_blank"
+              class="btn btn-ghost"
+              >Read the docs</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-left">
+          © 2026 Apider · Built by
+          <a href="https://github.com/Jorge-de-la-Flor" target="_blank"
+            >Jorge de la Flor</a
+          >
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+          <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+          <a href="https://github.com/Apider-io/apider/releases" target="_blank"
+            >Changelog</a
+          >
+          <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Pricing data
+      const plans = {
+        monthly: [
+          {
+            name: "Free",
+            price: 0,
+            period: "/month",
+            featured: false,
+            cta: "Start free",
+            ctaClass: "plan-btn-ghost",
+            features: [
+              "2,000 executions / month",
+              "1 scheduled job",
+              "All modules included",
+              "Community support",
+            ],
+          },
+          {
+            name: "Pro",
+            price: 19,
+            period: "/month",
+            featured: true,
+            cta: "Start Pro",
+            ctaClass: "plan-btn-red",
+            features: [
+              "50,000 executions / month",
+              "10 scheduled jobs",
+              "Priority execution",
+              "Email support",
+              "Early access to new modules",
+            ],
+          },
+          {
+            name: "Business",
+            price: 49,
+            period: "/month",
+            featured: false,
+            cta: "Contact sales",
+            ctaClass: "plan-btn-ghost",
+            features: [
+              "500,000 executions / month",
+              "Unlimited scheduled jobs",
+              "Dedicated SLAs",
+              "Priority support",
+              "Custom integrations",
+            ],
+          },
+        ],
+        yearly: [
+          {
+            name: "Free",
+            price: 0,
+            period: "/year",
+            featured: false,
+            cta: "Start free",
+            ctaClass: "plan-btn-ghost",
+            features: [
+              "2,000 executions / month",
+              "1 scheduled job",
+              "All modules included",
+              "Community support",
+            ],
+          },
+          {
+            name: "Pro",
+            price: 182,
+            period: "/year",
+            featured: true,
+            cta: "Start Pro yearly",
+            ctaClass: "plan-btn-red",
+            features: [
+              "50,000 executions / month",
+              "10 scheduled jobs",
+              "Priority execution",
+              "Email support",
+              "Early access to new modules",
+            ],
+          },
+          {
+            name: "Business",
+            price: 470,
+            period: "/year",
+            featured: false,
+            cta: "Contact sales",
+            ctaClass: "plan-btn-ghost",
+            features: [
+              "500,000 executions / month",
+              "Unlimited scheduled jobs",
+              "Dedicated SLAs",
+              "Priority support",
+              "Custom integrations",
+            ],
+          },
+        ],
+      };
+
+      const priceIds = {
+        monthly: {
+          Pro: "pri_01knttrzvxfvvkgwbcj6n5s60f",
+          Business: "pri_01knttz0p613st5d5e0x0c4gx2",
+        },
+        yearly: {
+          Pro: "pri_01kr77sc8yna1n6rv1mnqbq9zy",
+          Business: "pri_01kr77wprac010m3scx78v9ts5",
+        },
+      };
+
+      function renderPricing(cycle) {
+        const grid = document.getElementById("pricingGrid");
+        if (!grid) return;
+        grid.innerHTML = plans[cycle]
+          .map(
+            (p) => `
+    <div class="plan ${p.featured ? "featured" : ""}">
+      ${p.featured ? '<div class="featured-badge">Most popular</div>' : ""}
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-price"><sup>$</sup>${p.price}</div>
+      <div class="plan-period">${p.period}</div>
+      <hr class="plan-divider">
+      <ul class="plan-features">${p.features.map((f) => `<li>${f}</li>`).join("")}</ul>
+      <button 
+        class="plan-btn ${p.ctaClass}"
+        ${priceIds[cycle]?.[p.name] ? `data-price-id="${priceIds[cycle][p.name]}"` : ""}
+        onclick="handlePlanClick(this, '${p.name}')"
+      >${p.cta}</button>
+    </div>
+  `,
+          )
+          .join("");
+      }
+      renderPricing("monthly");
+
+      function handlePlanClick(btn, planName) {
+        if (planName === "Free") {
+          document
+            .querySelector(".cta-section")
+            .scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+        if (planName === "Business") {
+          window.location.href =
+            "mailto:frostcore@jafa.dev?subject=Business Plan";
+          return;
+        }
+
+        const priceId = btn.dataset.priceId;
+        if (!priceId) return;
+
+        const email = prompt("Enter your email to continue:");
+        if (!email || !email.includes("@")) return;
+
+        Paddle.Checkout.open({
+          items: [{ priceId: priceId, quantity: 1 }],
+          customer: { email: email }, // ← pre-rellena el email en el checkout
+          customData: { user_email: email }, // ← llega al webhook de Azure
+        });
+      }
+
+      document.querySelectorAll(".ptoggle").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".ptoggle")
+            .forEach((b) => b.classList.remove("on"));
+          btn.classList.add("on");
+          renderPricing(btn.dataset.c);
+        });
+      });
+
+      // Editor tabs
+      document.querySelectorAll(".etab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".etab")
+            .forEach((t) => t.classList.remove("on"));
+          document
+            .querySelectorAll(".pane")
+            .forEach((p) => p.classList.remove("on"));
+          tab.classList.add("on");
+          const target = document.getElementById("p-" + tab.dataset.p);
+          if (target) target.classList.add("on");
+        });
+      });
+
+      // Copy
+      const copyBtn = document.getElementById("copyBtn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText("pip install apider");
+          copyBtn.textContent = "✓";
+          setTimeout(() => (copyBtn.textContent = "📋"), 2000);
+        });
+      }
+
+      // Mobile menu
+      const menuBtn = document.getElementById("menuBtn");
+      const navLinks = document.querySelector(".nav-links");
+      if (menuBtn && navLinks) {
+        menuBtn.addEventListener("click", () => {
+          const isVisible = navLinks.style.display === "flex";
+          navLinks.style.display = isVisible ? "none" : "flex";
+        });
+      }
+
+      // Reveal on scroll
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("in");
+          });
+        },
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    </script>
+  </body>
 </html>
