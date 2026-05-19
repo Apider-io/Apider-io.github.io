@@ -57,6 +57,8 @@ The execution core is private to guarantee service security, but the SDK is **vi
 - **Developer?** Review the SDK and help us improve modules.
 - **Have an idea?** Open an Issue with a new module proposal (WhatsApp, Webhooks, AI, etc.).
 
+> 🔒 Code Security Note: To protect core intellectual property and SaaS billing infrastructure, the internal execution runtime (src/apider/) and Azure Functions backend configurations live in a private repository. If you are a technical recruiter or engineer looking to evaluate the core logic, architecture schemas, or deployment pipelines, please request access during the technical interview.
+
 ---
 
 ## 📫 Contact & Support
@@ -67,4 +69,5 @@ The execution core is private to guarantee service security, but the SDK is **vi
 
 ---
 
-*Built with ❤️ by [Jorge de la Flor](https://github.com/Jorge-de-la-Flor)*
+*Built with ❤️ by [Jorge de la Flor (FrostCore)](https://github.com/Jorge-de-la-Flor)*
+
