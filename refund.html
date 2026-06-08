@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refund Policy — Apider</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #e8412a;
+      --red-dim: rgba(232, 65, 42, 0.12);
+      --red-glow: rgba(232, 65, 42, 0.25);
+      --bg: #080809;
+      --bg2: #0e0e10;
+      --bg3: #131317;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #f0f0f2;
+      --text2: #b0b0c0;
+      --text3: #7a7a8a;
+      --mono: "SF Mono","Fira Code","Cascadia Code",monospace;
+      --sans: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); line-height: 1.6; overflow-x: hidden;
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    .bg-glow {
+      position: fixed; top: -30vh; left: 50%; transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(232,65,42,0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      background: rgba(8,8,9,0.75); border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0.9rem 2rem; }
+    .logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--red); color: white !important; padding: 0.45rem 1.1rem; border-radius: 8px; font-weight: 600 !important; transition: opacity 0.2s !important; }
+    .nav-cta:hover { opacity: 0.85; }
+
+    .wrap { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+    .page-header { position: relative; z-index: 1; padding: 4rem 0 3rem; }
+
+    .s-label { display: inline-block; font-family: var(--mono); font-size: 0.8rem; font-weight: 600; color: var(--red); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+
+    h1 { font-weight: 800; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.5rem; }
+    .meta { font-size: 0.85rem; color: var(--text3); padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+
+    .content { position: relative; z-index: 1; padding: 0 0 5rem; }
+
+    h2 { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.01em; margin: 2.5rem 0 0.75rem; }
+    p { color: var(--text2); font-size: 0.92rem; margin-bottom: 0.9rem; line-height: 1.65; }
+    ul { color: var(--text2); font-size: 0.92rem; padding-left: 1.4rem; margin-bottom: 0.9rem; }
+    ul li { margin-bottom: 0.4rem; line-height: 1.6; }
+    a { color: var(--red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .callout {
+      background: var(--bg2); border: 1px solid var(--border-bright);
+      border-left: 2px solid var(--red); border-radius: 10px;
+      padding: 1rem 1.25rem; margin: 1.5rem 0;
+      font-size: 0.88rem; color: var(--text2); line-height: 1.6;
+    }
+
+    /* Scenario cards */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+    @media (max-width: 560px) { .card-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.25rem;
+    }
+    .card h3 { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+    .card p { font-size: 0.84rem; color: var(--text3); margin: 0; line-height: 1.55; }
+    .card.ok  { border-top: 2px solid #2ecc71; }
+    .card.maybe { border-top: 2px solid #f39c12; }
+    .card.no  { border-top: 2px solid var(--red); }
+
+    /* Numbered steps */
+    .steps-list { list-style: none; padding: 0; margin: 1.5rem 0; counter-reset: step; }
+    .steps-list li {
+      counter-increment: step;
+      display: flex; gap: 1rem; margin-bottom: 1rem;
+      color: var(--text2); font-size: 0.92rem; line-height: 1.6;
+    }
+    .steps-list li::before {
+      content: counter(step);
+      min-width: 1.7rem; height: 1.7rem;
+      background: var(--red-dim); border: 1px solid var(--red);
+      color: var(--red); font-size: 0.78rem; font-weight: 700;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 0.15rem;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; position: relative; z-index: 1; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-left { color: var(--text2); font-size: 0.88rem; }
+    .footer-left a { color: #d0d0e0; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .footer-left a:hover { color: var(--red); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--text2); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 700px) { .nav-links { display: none; } h1 { font-size: 1.8rem; } }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Apider</a>
+    <div class="nav-links">
+      <a href="/#features">Features</a>
+      <a href="/#mcp">For AI Agents</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-header">
+    <div class="s-label">Legal</div>
+    <h1>Refund Policy</h1>
+    <p class="meta">Last updated: June 2026 &nbsp;·&nbsp; Effective immediately</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<div class="wrap content">
+
+  <p style="margin-top:2.5rem;">We want you to be confident trying Apider. This page explains exactly when refunds apply and how to request one.</p>
+
+  <h2>Pro Plan — 14-Day Free Trial</h2>
+  <p>The Pro plan includes a <strong style="color:var(--text)">14-day free trial</strong>. You will not be charged during the trial period. Cancel any time before the trial ends — no charge, no refund request needed.</p>
+
+  <h2>Refund Eligibility by Scenario</h2>
+
+  <div class="card-grid">
+    <div class="card ok">
+      <h3>✓ Full refund</h3>
+      <p>You were charged within the last 7 days and have not used the Service after the trial ended (zero post-trial executions).</p>
+    </div>
+    <div class="card maybe">
+      <h3>→ Case-by-case</h3>
+      <p>A technical failure on our side prevented you from using the Service for more than 48 consecutive hours during your paid period.</p>
+    </div>
+    <div class="card no">
+      <h3>✕ Not eligible</h3>
+      <p>The Service was used (executions ran), the 7-day window has passed, or the request is for a reason unrelated to Service availability.</p>
+    </div>
+    <div class="card no">
+      <h3>✕ Annual plans</h3>
+      <p>Annual subscriptions (Pro Yearly, Business Yearly) are non-refundable after 7 days from the charge date.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    Overage charges are not refunded — they reflect real execution usage beyond your plan limit. You can monitor usage in the <a href="https://apider-functions.azurewebsites.net/api/ui" target="_blank">management dashboard</a>.
+  </div>
+
+  <h2>How to Request a Refund</h2>
+
+  <ol class="steps-list">
+    <li>Email <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a> with the subject <strong style="color:var(--text)">"Refund Request"</strong>.</li>
+    <li>Include the email address on your Apider account and the date of the charge.</li>
+    <li>Briefly describe the reason for the request.</li>
+    <li>We will respond within <strong style="color:var(--text)">3 business days</strong>. If approved, refunds are processed through Paddle and typically appear in 5–10 business days depending on your bank.</li>
+  </ol>
+
+  <h2>Cancellations</h2>
+  <p>You can cancel your subscription at any time. Cancellation stops future billing immediately but does not pro-rate or refund unused days in the current period. Your plan remains active until the end of the billing period already paid for.</p>
+  <p>To cancel, contact us at <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a> or manage your subscription directly through the Paddle customer portal (link included in your billing confirmation email).</p>
+
+  <h2>Free Plan</h2>
+  <p>The Free plan has no cost, so no refunds apply. If you hit your 2,000 execution limit, upgrade to Pro or wait for your counter to reset on your 30-day cycle.</p>
+
+  <h2>Questions?</h2>
+  <p>Contact us at <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a> — we'll sort it out.</p>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank">Jorge de la Flor</a>
+    </div>
+    <div class="footer-links">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/refund">Refund</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
