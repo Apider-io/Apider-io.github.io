@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — Apider</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #e8412a;
+      --red-dim: rgba(232, 65, 42, 0.12);
+      --red-glow: rgba(232, 65, 42, 0.25);
+      --bg: #080809;
+      --bg2: #0e0e10;
+      --bg3: #131317;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #f0f0f2;
+      --text2: #b0b0c0;
+      --text3: #7a7a8a;
+      --mono: "SF Mono","Fira Code","Cascadia Code",monospace;
+      --sans: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    .bg-glow {
+      position: fixed;
+      top: -30vh; left: 50%;
+      transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(232,65,42,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      background: rgba(8,8,9,0.75);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto; padding: 0.9rem 2rem;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      text-decoration: none; color: var(--text);
+      font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      color: var(--text2); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--red); color: white !important;
+      padding: 0.45rem 1.1rem; border-radius: 8px;
+      font-weight: 600 !important; transition: opacity 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* LAYOUT */
+    .wrap { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+
+    .page-header {
+      position: relative; z-index: 1;
+      padding: 4rem 0 3rem;
+    }
+
+    .s-label {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.8rem; font-weight: 600;
+      color: var(--red); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-weight: 800; font-size: clamp(2rem, 5vw, 3rem);
+      letter-spacing: -0.025em; line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta {
+      font-size: 0.85rem; color: var(--text3);
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    /* CONTENT */
+    .content { position: relative; z-index: 1; padding: 0 0 5rem; }
+
+    h2 {
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      letter-spacing: -0.01em; margin: 2.5rem 0 0.75rem;
+    }
+
+    p { color: var(--text2); font-size: 0.92rem; margin-bottom: 0.9rem; line-height: 1.65; }
+
+    ul {
+      color: var(--text2); font-size: 0.92rem;
+      padding-left: 1.4rem; margin-bottom: 0.9rem;
+    }
+    ul li { margin-bottom: 0.4rem; line-height: 1.6; }
+
+    a { color: var(--red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: var(--mono); font-size: 0.82rem;
+      background: var(--bg3); border: 1px solid var(--border-bright);
+      border-radius: 4px; padding: 0.1rem 0.4rem; color: var(--text2);
+    }
+
+    .callout {
+      background: var(--bg2);
+      border: 1px solid var(--border-bright);
+      border-left: 2px solid var(--red);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem; position: relative; z-index: 1;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left { color: var(--text2); font-size: 0.88rem; }
+    .footer-left a { color: #d0d0e0; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .footer-left a:hover { color: var(--red); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--text2); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Apider</a>
+    <div class="nav-links">
+      <a href="/#features">Features</a>
+      <a href="/#mcp">For AI Agents</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-header">
+    <div class="s-label">Legal</div>
+    <h1>Terms of Service</h1>
+    <p class="meta">Last updated: June 2026 &nbsp;·&nbsp; Effective immediately</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<div class="wrap content">
+
+  <p style="margin-top:2.5rem;">These Terms of Service ("Terms") govern your access to and use of the Apider platform, including the SDK, API, cloud execution runtime, and management dashboard (collectively, the "Service"). By using the Service, you agree to these Terms.</p>
+
+  <h2>1. The Service</h2>
+  <p>Apider provides a cloud-native Python automation runtime. Your code is executed on our infrastructure (Microsoft Azure Functions). The thin-client SDK you install locally sends encrypted requests to the cloud — business logic runs on our servers, not on your machine.</p>
+
+  <h2>2. Accounts and API Keys</h2>
+  <p>You are responsible for maintaining the confidentiality of your API keys (<code>APIDER_FUNCTION_KEY</code>, <code>APIDER_ENCRYPTION_KEY</code>) and any credentials stored in your <code>.env</code> file. You are responsible for all activity that occurs under your account or keys.</p>
+  <ul>
+    <li>Do not share your function key publicly (e.g., in public GitHub repos).</li>
+    <li>Rotate keys immediately if you suspect compromise.</li>
+    <li>You are solely responsible for the credentials of third-party services (Telegram, Gmail, Slack, etc.) configured in your environment.</li>
+  </ul>
+
+  <h2>3. Acceptable Use</h2>
+  <p>You may use Apider to automate tasks, connect services, and build workflows using Python. You agree not to:</p>
+  <ul>
+    <li>Use the Service for illegal activities, spam, or harassment.</li>
+    <li>Attempt to reverse-engineer or extract server-side business logic.</li>
+    <li>Abuse the execution infrastructure (e.g., deliberate DDoS or resource exhaustion attacks).</li>
+    <li>Resell or sublicense access to the Service without written permission.</li>
+  </ul>
+
+  <h2>4. Execution Limits and Overage</h2>
+  <div class="callout">
+    Free plans are hard-blocked at 2,000 executions/month. Pro and Business plans are never blocked mid-execution — usage beyond the monthly limit is tracked as overage and settled at the next billing cycle.
+  </div>
+  <p>Execution counters reset every 30 days from your registration date, not on a fixed calendar day. We reserve the right to adjust plan limits with 30 days' notice.</p>
+
+  <h2>5. Credentials and Security</h2>
+  <p>Your third-party credentials travel Fernet-encrypted in every request and are decrypted in-memory only during execution. They are never logged or stored in plain text by Apider. Two components — Webhooks and CloudScheduler — persist your encrypted environment in Azure Table Storage so they can operate without an active session. This storage is protected by Azure RBAC and Fernet encryption at rest.</p>
+
+  <h2>6. Service Availability</h2>
+  <p>The Service is built on Microsoft Azure Functions (Consumption plan), which carries a 99.95% uptime SLA from Microsoft. We make no additional availability guarantees beyond the underlying infrastructure SLA.</p>
+
+  <h2>7. Billing</h2>
+  <p>Paid plans are billed through <a href="https://paddle.com" target="_blank">Paddle</a>, our Merchant of Record. Paddle handles all payment processing and tax compliance. Pricing is displayed at <a href="/#pricing">apider-io.github.io/#pricing</a>.</p>
+
+  <h2>8. Termination</h2>
+  <p>You may cancel your subscription at any time through Paddle or by contacting us. We reserve the right to suspend or terminate your access for violations of these Terms, without prior notice if necessary to protect the integrity of the Service.</p>
+
+  <h2>9. Limitation of Liability</h2>
+  <p>The Service is provided "as is." To the maximum extent permitted by applicable law, Apider shall not be liable for any indirect, incidental, special, or consequential damages, including loss of data or revenue. Our total liability for direct damages shall not exceed the amount you paid us in the 3 months preceding the claim.</p>
+
+  <h2>10. Changes to These Terms</h2>
+  <p>We may update these Terms from time to time. Material changes will be communicated via email or a notice on the site. Continued use after changes take effect constitutes acceptance.</p>
+
+  <h2>11. Contact</h2>
+  <p>Questions about these Terms? <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a></p>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank">Jorge de la Flor</a>
+    </div>
+    <div class="footer-links">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/refund">Refund</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
