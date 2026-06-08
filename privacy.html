@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Apider</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #e8412a;
+      --red-dim: rgba(232, 65, 42, 0.12);
+      --red-glow: rgba(232, 65, 42, 0.25);
+      --bg: #080809;
+      --bg2: #0e0e10;
+      --bg3: #131317;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #f0f0f2;
+      --text2: #b0b0c0;
+      --text3: #7a7a8a;
+      --mono: "SF Mono","Fira Code","Cascadia Code",monospace;
+      --sans: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    .bg-glow {
+      position: fixed; top: -30vh; left: 50%;
+      transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(232,65,42,0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      background: rgba(8,8,9,0.75);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto; padding: 0.9rem 2rem;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      text-decoration: none; color: var(--text);
+      font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--red); color: white !important; padding: 0.45rem 1.1rem; border-radius: 8px; font-weight: 600 !important; transition: opacity 0.2s !important; }
+    .nav-cta:hover { opacity: 0.85; }
+
+    .wrap { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+
+    .page-header { position: relative; z-index: 1; padding: 4rem 0 3rem; }
+
+    .s-label {
+      display: inline-block; font-family: var(--mono);
+      font-size: 0.8rem; font-weight: 600; color: var(--red);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-weight: 800; font-size: clamp(2rem, 5vw, 3rem);
+      letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.5rem;
+    }
+
+    .meta { font-size: 0.85rem; color: var(--text3); padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+
+    .content { position: relative; z-index: 1; padding: 0 0 5rem; }
+
+    h2 { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.01em; margin: 2.5rem 0 0.75rem; }
+
+    p { color: var(--text2); font-size: 0.92rem; margin-bottom: 0.9rem; line-height: 1.65; }
+
+    ul { color: var(--text2); font-size: 0.92rem; padding-left: 1.4rem; margin-bottom: 0.9rem; }
+    ul li { margin-bottom: 0.4rem; line-height: 1.6; }
+
+    a { color: var(--red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: var(--mono); font-size: 0.82rem;
+      background: var(--bg3); border: 1px solid var(--border-bright);
+      border-radius: 4px; padding: 0.1rem 0.4rem; color: var(--text2);
+    }
+
+    .callout {
+      background: var(--bg2); border: 1px solid var(--border-bright);
+      border-left: 2px solid var(--red); border-radius: 10px;
+      padding: 1rem 1.25rem; margin: 1.5rem 0;
+      font-size: 0.88rem; color: var(--text2); line-height: 1.6;
+    }
+
+    .callout strong { color: var(--text); }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: 12px; border: 1px solid var(--border); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+
+    th {
+      text-align: left; color: var(--text); font-weight: 600;
+      padding: 0.7rem 1rem; background: var(--bg3);
+      border-bottom: 1px solid var(--border-bright);
+    }
+
+    td { color: var(--text2); padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+
+    tr:last-child td { border-bottom: none; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; position: relative; z-index: 1; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-left { color: var(--text2); font-size: 0.88rem; }
+    .footer-left a { color: #d0d0e0; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .footer-left a:hover { color: var(--red); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--text2); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Apider</a>
+    <div class="nav-links">
+      <a href="/#features">Features</a>
+      <a href="/#mcp">For AI Agents</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="/#pricing" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-header">
+    <div class="s-label">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: June 2026 &nbsp;·&nbsp; Effective immediately</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<div class="wrap content">
+
+  <p style="margin-top:2.5rem;">This Privacy Policy explains what data Apider collects, how it is used, and how it is protected. Apider is a developer tool — we collect the minimum data necessary to provide the Service.</p>
+
+  <div class="callout">
+    <strong>Short version:</strong> Your third-party credentials (Telegram tokens, email passwords, API keys) never leave your machine unencrypted. We do not sell your data. We do not run ads.
+  </div>
+
+  <h2>1. Data We Collect</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Why</th>
+          <th>Where stored</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Email address</td>
+          <td>Account ID, plan tracking, billing</td>
+          <td>Azure Table Storage (<code>apiderusers</code>)</td>
+        </tr>
+        <tr>
+          <td>Execution count</td>
+          <td>Enforce plan limits and overage</td>
+          <td>Azure Table Storage (<code>apiderusers</code>)</td>
+        </tr>
+        <tr>
+          <td>Execution logs</td>
+          <td>Debugging — function name, duration, errors</td>
+          <td>Azure Table Storage (<code>apiderlogs</code>)</td>
+        </tr>
+        <tr>
+          <td>Webhook registrations</td>
+          <td>Dispatch external events to your functions</td>
+          <td>Azure Table Storage (<code>apiderwebhooks</code>), Fernet-encrypted env</td>
+        </tr>
+        <tr>
+          <td>Scheduled jobs</td>
+          <td>Execute CloudScheduler functions on timer</td>
+          <td>Azure Table Storage (<code>apiderschedules</code>), Fernet-encrypted env</td>
+        </tr>
+        <tr>
+          <td>Payment data</td>
+          <td>Subscription and billing</td>
+          <td>Handled exclusively by Paddle — we never see card numbers</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2. Your Third-Party Credentials</h2>
+  <p>Credentials in your <code>.env</code> file (API tokens, email passwords, webhook URLs) are treated with the following guarantees:</p>
+  <ul>
+    <li><strong style="color:var(--text)">Encrypted in transit:</strong> Every SDK request encrypts your credentials with Fernet (AES-128-CBC + HMAC-SHA256) before sending over HTTPS — double-encrypted.</li>
+    <li><strong style="color:var(--text)">In-memory only:</strong> On Azure, credentials are decrypted via Python's <code>ContextVar</code>, used for the duration of your request, and immediately discarded. Never written to disk or logged.</li>
+    <li><strong style="color:var(--text)">Encrypted at rest:</strong> Webhooks and CloudScheduler persist your environment Fernet-encrypted. The key is your <code>APIDER_ENCRYPTION_KEY</code> — we do not hold a copy.</li>
+    <li><strong style="color:var(--text)">Never sold, never shared:</strong> Your credentials are not accessed by Apider staff unless you explicitly share them in a support request.</li>
+  </ul>
+
+  <h2>3. Execution Logs</h2>
+  <p>When modules execute (e.g., <code>Telegram.send</code>, <code>Email.read</code>), we log the function name, execution duration, and any error message. We do not log the content of messages sent, emails read, or data written to Sheets. Logs are scoped to your user ID and visible only to you.</p>
+
+  <h2>4. Third-Party Services</h2>
+  <p>Apider relies on the following sub-processors:</p>
+  <ul>
+    <li><strong style="color:var(--text)">Microsoft Azure</strong> — cloud execution runtime and storage. <a href="https://privacy.microsoft.com" target="_blank">Azure Privacy →</a></li>
+    <li><strong style="color:var(--text)">Paddle</strong> — payment processing and Merchant of Record. <a href="https://www.paddle.com/legal/privacy" target="_blank">Paddle Privacy →</a></li>
+  </ul>
+  <p>We do not use analytics trackers, advertising networks, or any other third-party data processors beyond the above.</p>
+
+  <h2>5. Cookies</h2>
+  <p>The Apider website and management dashboard do not use tracking cookies. The dashboard is a stateless HTML page that communicates directly with the Azure Functions API using your function key.</p>
+
+  <h2>6. Data Retention</h2>
+  <ul>
+    <li>Execution logs: retained indefinitely (up to 100 entries per user). Clearable on request.</li>
+    <li>User account data: retained while your account is active. Deleted within 30 days of account closure request.</li>
+    <li>Webhook and Scheduler data: deleted immediately when you cancel the webhook or job.</li>
+  </ul>
+
+  <h2>7. Your Rights</h2>
+  <p>Depending on your jurisdiction, you may have rights to access, correct, or delete personal data we hold about you. Email us at <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a> with the subject "Privacy Request." We will respond within 30 days.</p>
+
+  <h2>8. Changes to This Policy</h2>
+  <p>We may update this policy as the Service evolves. Material changes will be communicated via email. The date at the top reflects the most recent revision.</p>
+
+  <h2>9. Contact</h2>
+  <p>Privacy questions or requests: <a href="mailto:frostcore@jafa.dev">frostcore@jafa.dev</a></p>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      © 2026 Apider · Built by <a href="https://github.com/Jorge-de-la-Flor" target="_blank">Jorge de la Flor</a>
+    </div>
+    <div class="footer-links">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/refund">Refund</a>
+      <a href="https://github.com/Apider-io" target="_blank">GitHub</a>
+      <a href="https://pypi.org/project/apider/" target="_blank">PyPI</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
