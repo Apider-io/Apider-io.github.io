@@ -817,6 +817,9 @@
 
       /* ── MOBILE ── */
       @media (max-width: 900px) {
+        #mcp > .wrap > .reveal {
+          grid-template-columns: 1fr;
+        }
         .feat-grid,
         .steps,
         .pricing-grid {
@@ -880,6 +883,7 @@
         </a>
         <div class="nav-links">
           <a href="#features">Features</a>
+          <a href="#mcp">For AI Agents</a>
           <a href="#how">How it works</a>
           <a href="#pricing">Pricing</a>
           <a href="https://apider-io.github.io/docs" target="_blank">Docs</a>
@@ -902,8 +906,11 @@
           <span class="accent">Without</span> <span class="dim">the mess.</span>
         </h1>
         <p class="hero-sub">
-          One SDK for Email, Telegram, Discord, Slack, and Google Sheets. Write
-          automation logic in Python — we run it in the cloud.
+          One SDK for Email, Telegram, Discord, Slack, and Google Sheets — and
+          the
+          <strong style="color: var(--text)"
+            >execution backend your AI agents need</strong
+          >. Write automation logic in Python — we run it in the cloud.
         </p>
         <div class="hero-actions">
           <a href="#pricing" class="btn btn-red">Start for free →</a>
@@ -982,6 +989,8 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
     <!-- MARQUEE -->
     <div class="marquee-section">
       <div class="marquee-track" id="marquee">
+        <div class="mtag"><span>🤖</span> MCP Server</div>
+        <div class="mtag"><span>⚡</span> AI Agent Backend</div>
         <div class="mtag"><span>📧</span> Gmail</div>
         <div class="mtag"><span>📧</span> Outlook</div>
         <div class="mtag"><span>✈️</span> Telegram</div>
@@ -1067,11 +1076,116 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
               execution, multiple outputs.
             </p>
           </div>
+          <div
+            class="feat-card"
+            style="
+              border-color: var(--red);
+              background: linear-gradient(
+                160deg,
+                rgba(232, 65, 42, 0.06),
+                var(--bg2)
+              );
+            "
+          >
+            <span class="feat-icon">🤖</span>
+            <h3>Native MCP server</h3>
+            <p>
+              Apider exposes all its modules as MCP tools. Claude, Cursor, or
+              any AI agent can send emails, read Sheets, and call any API —
+              without a local server running.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
     <hr class="divider" />
+
+    <section id="mcp" style="background: var(--bg2)">
+      <div class="wrap">
+        <div
+          class="reveal"
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+          "
+        >
+          <div>
+            <div class="s-label">For AI Agents</div>
+            <h2 class="s-title">Your agent.<br />Without the laptop.</h2>
+            <p class="s-sub" style="margin-bottom: 1.5rem">
+              Most MCP servers run on your machine — which means your laptop
+              must stay open for your AI agent to work. Apider runs in Azure.
+              Your agent executes tasks 24/7, even when you're offline.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem">
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start">
+                <span
+                  style="color: var(--red); font-weight: 700; flex-shrink: 0"
+                  >✓</span
+                >
+                <span style="color: var(--text2); font-size: 0.9rem"
+                  >Claude, Cursor, Windsurf — any MCP-compatible agent</span
+                >
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start">
+                <span
+                  style="color: var(--red); font-weight: 700; flex-shrink: 0"
+                  >✓</span
+                >
+                <span style="color: var(--text2); font-size: 0.9rem"
+                  >Zero local server — 50-line proxy, all logic runs in
+                  Azure</span
+                >
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start">
+                <span
+                  style="color: var(--red); font-weight: 700; flex-shrink: 0"
+                  >✓</span
+                >
+                <span style="color: var(--text2); font-size: 0.9rem"
+                  >Credentials never leave your machine — Fernet-encrypted per
+                  request</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="editor">
+            <div class="editor-bar">
+              <span class="dot dot-r"></span>
+              <span class="dot dot-y"></span>
+              <span class="dot dot-g"></span>
+              <span
+                style="
+                  font-family: var(--mono);
+                  font-size: 0.8rem;
+                  color: var(--text3);
+                  margin-left: 0.5rem;
+                "
+                >claude_desktop_config.json</span
+              >
+            </div>
+            <div class="pane on" style="display: block">
+              <pre><span class="op">{</span>
+  <span class="st">"mcpServers"</span><span class="op">: {</span>
+    <span class="st">"apider"</span><span class="op">: {</span>
+      <span class="st">"command"</span><span class="op">:</span> <span class="st">"apider"</span><span class="op">,</span>
+      <span class="st">"args"</span><span class="op">:</span> [<span class="st">"mcp-proxy"</span>]<span class="op">,</span>
+      <span class="st">"env"</span><span class="op">: {</span>
+        <span class="st">"APIDER_ENDPOINT"</span><span class="op">:</span> <span class="st">"https://..."</span><span class="op">,</span>
+        <span class="st">"APIDER_FUNCTION_KEY"</span><span class="op">:</span> <span class="st">"&lt;key&gt;"</span><span class="op">,</span>
+        <span class="st">"APIDER_ENCRYPTION_KEY"</span><span class="op">:</span> <span class="st">"&lt;key&gt;"</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- HOW IT WORKS -->
     <section id="how">
@@ -1303,7 +1417,7 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
       <div class="plan-name">${p.name}</div>
       <div class="plan-price"><sup>$</sup>${p.price}</div>
       <div class="plan-period">${p.period}</div>
-      ${p.trial ? '<div style="color: var(--red); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">14-day free trial</div>' : ''}
+      ${p.trial ? '<div style="color: var(--red); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">14-day free trial</div>' : ""}
       <hr class="plan-divider">
       <ul class="plan-features">${p.features.map((f) => `<li>${f}</li>`).join("")}</ul>
       <button 
