@@ -10,8 +10,8 @@
     <title>Apider — Python automation without infrastructure</title>
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
-      Paddle.Environment.set("production");
-      Paddle.Initialize({ token: "live_1e2bd8f9fb0dbf64285cad95ce6" });
+      Paddle.Environment.set("sandbox");
+      Paddle.Initialize({ token: "test_a75d432bb7fb60897c273339b3a" });
     </script>
     <style>
       *,
@@ -986,9 +986,10 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
       </div>
     </div>
 
-    <!-- MARQUEE -->
+    <!-- MARQUEE (CORREGIDO PARA INFINITO) -->
     <div class="marquee-section">
       <div class="marquee-track" id="marquee">
+        <!-- Primer bloque -->
         <div class="mtag"><span>🤖</span> MCP Server</div>
         <div class="mtag"><span>⚡</span> AI Agent Backend</div>
         <div class="mtag"><span>📧</span> Gmail</div>
@@ -1001,6 +1002,9 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
         <div class="mtag"><span>🔐</span> Zero secret storage</div>
         <div class="mtag"><span>☁️</span> Azure Functions</div>
         <div class="mtag"><span>🐍</span> Pure Python</div>
+        <!-- Bloque clonado para el loop infinito espejo -->
+        <div class="mtag"><span>🤖</span> MCP Server</div>
+        <div class="mtag"><span>⚡</span> AI Agent Backend</div>
         <div class="mtag"><span>📧</span> Gmail</div>
         <div class="mtag"><span>📧</span> Outlook</div>
         <div class="mtag"><span>✈️</span> Telegram</div>
@@ -1451,13 +1455,28 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
         const priceId = btn.dataset.priceId;
         if (!priceId) return;
 
-        const email = prompt("Enter your email to continue:");
-        if (!email || !email.includes("@")) return;
-
+        // Dejamos que Paddle maneje el flujo completo de forma nativa y estética
         Paddle.Checkout.open({
-          items: [{ priceId: priceId, quantity: 1 }],
-          customer: { email: email }, // ← pre-rellena el email en el checkout
-          customData: { user_email: email }, // ← llega al webhook de Azure
+          settings: {
+            displayMode: "overlay",
+            theme: "dark", // Forzamos el tema oscuro para que combine con Apider
+            locale: "en",
+          },
+          items: [
+            {
+              priceId: priceId,
+              quantity: 1,
+            },
+          ],
+          // Si tienes el email del usuario en tu sesión/App lo pones aquí,
+          // si no, borras esta propiedad "customer" y Paddle se lo pedirá elegantemente en el modal.
+          // customer: {
+          //   email: "correo@ejemplo.com"
+          // },
+          customData: {
+            // Este tag llega directo a tu Azure Function en el webhook
+            plan_name: planName,
+          },
         });
       }
 
@@ -1516,6 +1535,14 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
         { threshold: 0.1 },
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth <= 900) {
+            navLinks.style.display = "none";
+          }
+        });
+      });
     </script>
   </body>
 </html>
