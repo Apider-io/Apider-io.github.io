@@ -10,8 +10,42 @@
     <title>Apider — Python automation without infrastructure</title>
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
-      Paddle.Environment.set("sandbox");
-      Paddle.Initialize({ token: "test_a75d432bb7fb60897c273339b3a" });
+      // ── Paddle: UN solo interruptor ─────────────────────────────────────
+      // sandbox y live son mundos separados: token, price IDs, customers y
+      // webhooks NO se cruzan. Para pasar a producción cambia SOLO esta línea
+      // y, en el backend, PADDLE_ENV=live en el .env → make push-secrets.
+      const PADDLE_ENV = "sandbox"; // "sandbox" | "live"
+
+      const PADDLE_CONFIG = {
+        sandbox: {
+          token: "test_a75d432bb7fb60897c273339b3a",
+          prices: {
+            monthly: { Pro: "pri_01ktks9grm64q189ck5rht6h2f" },
+            yearly: { Pro: "" }, // PENDIENTE: crear el Pro anual en SANDBOX y pegar su pri_ aquí
+          },
+        },
+        live: {
+          token: "", // PENDIENTE: client-side token live_… (Paddle → Developer tools → Authentication)
+          prices: {
+            monthly: {
+              Pro: "pri_01knttrzvxfvvkgwbcj6n5s60f",
+              Business: "pri_01knttz0p613st5d5e0x0c4gx2",
+            },
+            yearly: {
+              Pro: "pri_01kr77sc8yna1n6rv1mnqbq9zy",
+              Business: "pri_01kr77wprac010m3scx78v9ts5",
+            },
+          },
+        },
+      };
+
+      const PADDLE = PADDLE_CONFIG[PADDLE_ENV];
+      // Paddle.js puede no cargar (bloqueadores): la página sigue funcionando.
+      const PADDLE_READY = typeof Paddle !== "undefined" && Boolean(PADDLE.token);
+      if (PADDLE_READY) {
+        if (PADDLE_ENV === "sandbox") Paddle.Environment.set("sandbox");
+        Paddle.Initialize({ token: PADDLE.token });
+      }
     </script>
     <style>
       *,
@@ -869,6 +903,49 @@
           font-size: 0.75rem;
         }
       }
+
+      /* Checkout: email de la cuenta Apider antes de abrir Paddle */
+      .checkout-dialog {
+        margin: auto;
+        width: min(420px, calc(100% - 32px));
+        padding: 1.6rem;
+        background: var(--bg2);
+        color: var(--text);
+        border: 1px solid var(--border-bright);
+        border-radius: 16px;
+        font-family: var(--sans);
+      }
+      .checkout-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.7);
+      }
+      .checkout-dialog h3 {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+      }
+      .checkout-dialog p {
+        color: var(--text2);
+        font-size: 0.88rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+      }
+      .checkout-dialog input {
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+        margin-bottom: 1rem;
+        background: var(--bg3);
+        color: var(--text);
+        border: 1px solid var(--border-bright);
+        border-radius: 10px;
+        font: inherit;
+      }
+      .checkout-dialog input:focus {
+        outline: none;
+        border-color: var(--red);
+      }
+      .checkout-actions {
+        display: flex;
+        gap: 0.6rem;
+      }
     </style>
   </head>
   <body>
@@ -1304,6 +1381,33 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
       </div>
     </footer>
 
+    <!-- El email ES la identidad en Apider: el webhook activa el plan en la
+         cuenta de este email (custom_data.user_email). -->
+    <dialog id="checkoutDialog" class="checkout-dialog">
+      <form id="checkoutForm" novalidate>
+        <h3 id="checkoutTitle">Start your plan</h3>
+        <p>
+          Enter the email you use (or will use) with Apider. Your plan is
+          linked to this email.
+        </p>
+        <input
+          type="email"
+          id="checkoutEmail"
+          required
+          autocomplete="email"
+          placeholder="you@company.com"
+        />
+        <div class="checkout-actions">
+          <button type="button" class="plan-btn plan-btn-ghost" id="checkoutCancel">
+            Cancel
+          </button>
+          <button type="submit" class="plan-btn plan-btn-red">
+            Continue to checkout
+          </button>
+        </div>
+      </form>
+    </dialog>
+
     <script>
       // Pricing data
       const plans = {
@@ -1402,16 +1506,8 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
         ],
       };
 
-      const priceIds = {
-        monthly: {
-          Pro: "pri_01ktks9grm64q189ck5rht6h2f",
-          Business: "pri_01knttz0p613st5d5e0x0c4gx2",
-        },
-        yearly: {
-          Pro: "pri_01kr77sc8yna1n6rv1mnqbq9zy",
-          Business: "pri_01kr77wprac010m3scx78v9ts5",
-        },
-      };
+      // Price IDs del entorno activo (ver PADDLE_CONFIG en el <head>).
+      const priceIds = PADDLE.prices;
 
       function renderPricing(cycle) {
         const grid = document.getElementById("pricingGrid");
@@ -1453,30 +1549,55 @@ Sheets.<span class="fn">upsert</span>(<span class="st">"email"</span>, <span cla
         }
 
         const priceId = btn.dataset.priceId;
-        if (!priceId) return;
+        if (!priceId || !PADDLE_READY) {
+          console.warn(
+            `Paddle (${PADDLE_ENV}): sin Paddle.js, token o price ID de ${planName}`,
+          );
+          return;
+        }
 
-        // Dejamos que Paddle maneje el flujo completo de forma nativa y estética
+        // Primero el email de la cuenta Apider; el checkout se abre al confirmar.
+        pendingCheckout = { priceId, planName };
+        checkoutTitle.textContent = `Start your ${planName} plan`;
+        checkoutDialog.showModal();
+        checkoutEmail.focus();
+      }
+
+      const checkoutDialog = document.getElementById("checkoutDialog");
+      const checkoutForm = document.getElementById("checkoutForm");
+      const checkoutEmail = document.getElementById("checkoutEmail");
+      const checkoutTitle = document.getElementById("checkoutTitle");
+      let pendingCheckout = null;
+
+      document
+        .getElementById("checkoutCancel")
+        .addEventListener("click", () => checkoutDialog.close());
+
+      checkoutForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!checkoutEmail.checkValidity()) {
+          checkoutEmail.reportValidity();
+          return;
+        }
+        const email = checkoutEmail.value.trim().toLowerCase();
+        checkoutDialog.close();
+        openCheckout(pendingCheckout, email);
+      });
+
+      function openCheckout({ priceId, planName }, email) {
         Paddle.Checkout.open({
           settings: {
             displayMode: "overlay",
-            theme: "dark", // Forzamos el tema oscuro para que combine con Apider
+            theme: "dark",
             locale: "en",
           },
-          items: [
-            {
-              priceId: priceId,
-              quantity: 1,
-            },
-          ],
-          // Si tienes el email del usuario en tu sesión/App lo pones aquí,
-          // si no, borras esta propiedad "customer" y Paddle se lo pedirá elegantemente en el modal.
-          // customer: {
-          //   email: "correo@ejemplo.com"
-          // },
-          customData: {
-            // Este tag llega directo a tu Azure Function en el webhook
-            plan_name: planName,
-          },
+          items: [{ priceId, quantity: 1 }],
+          // Prellena (y fija) el email en el checkout de Paddle: el customer
+          // de Paddle y la cuenta Apider quedan con el MISMO email.
+          customer: { email },
+          // Paddle lo propaga de la transacción a la suscripción: es lo que
+          // usa el webhook para saber qué cuenta activar (user_email).
+          customData: { plan_name: planName, user_email: email },
         });
       }
 
